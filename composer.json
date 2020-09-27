@@ -1,0 +1,22 @@
+{
+    "name": "codenom/framework",
+    "description": "N/A",
+    "type": "codeshop-library",
+    "homepage": "https://github.com/codenomdev/framework",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "~7.2||~7.3.0",
+        "smarty/smarty": "~3.1",
+        "bshaffer/oauth2-server-php": "^1.10"
+    },
+    "require-dev": {
+        "codeigniter4/framework": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codenom\\Framework\\": "/"
+        }
+    }
+}
