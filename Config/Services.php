@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 namespace Codenom\Framework\Config;
@@ -17,3 +18,20 @@ class Services extends CoreServices
         return new Smarty($viewPath, static::locator());
     }
 }
+=======
+<?php
+
+namespace Codenom\Framework\Config;
+
+class Services
+{
+    public function test()
+    {
+        return 'test vendor';
+    }
+    public function test1()
+    {
+        return 'test vendor';
+    }
+}
+>>>>>>> 72d3c4b8623df9d09b4585a1a063cd451eace84c

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "name": "codenom/framework",
     "description": "N/A",
@@ -19,4 +20,26 @@
             "Codenom\\Framework\\": "/"
         }
     }
+=======
+{
+    "name": "codenom/framework",
+    "description": "N/A",
+    "type": "codeshop-library",
+    "homepage": "https://github.com/codenomdev/framework",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "~7.2||~7.3.0",
+        "smarty/smarty": "~3.1"
+    },
+    "require-dev": {
+        "codeigniter4/framework": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codenom\\Framework\\": "/"
+        }
+    }
+>>>>>>> 72d3c4b8623df9d09b4585a1a063cd451eace84c
 }
