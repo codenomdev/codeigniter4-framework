@@ -27,6 +27,15 @@ class Smarty extends \Smarty
      * @var mixed
      */
     protected $loader;
+
+    /**
+     * Data that is made available to the Views.
+     *
+     * @var array
+     */
+    protected $data = [];
+
+    protected $tempData = null;
     /**
      * debug mode
      * Setting this to true enables the debug-console.
@@ -158,10 +167,51 @@ class Smarty extends \Smarty
 
     public function view($tpl_name)
     {
-        // if (\substr($tpl_name, -4) != '.tpl') {
-        //     $tpl_name .= '.tpl';
-        // }
         parent::display($this->_view($tpl_name));
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Sets several pieces of view data at once.
+     *
+     * @param array  $data
+     * @param string $context The context to escape it for: html, css, js, url
+     *                        If null, no escaping will happen
+     *
+     * @return SmartyVariables
+     */
+    public function setData(array $data = [], string $context = null)
+    {
+        if ($context) {
+            $data = \esc($data, $context);
+        }
+        $this->tempData = $this->tempData ?? $this->data;
+        $this->tempData = array_merge($this->tempData, $data);
+        return parent::assign($this->tempData);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Sets a single piece of view data.
+     *
+     * @param string $name
+     * @param mixed  $value
+     * @param string $context The context to escape it for: html, css, js, url
+     *                        If null, no escaping will happen
+     *
+     * @return SmartyVariables
+     */
+    public function setVar(string $name, $value = null, string $context = null)
+    {
+        if ($context) {
+            $value = \esc($value, $context);
+        }
+
+        $this->tempData        = $this->tempData ?? $this->data;
+        $this->tempData[$name] = $value;
+        return parent::assign($this->tempData);
     }
 
     protected function _view($tpl_name)
