@@ -161,7 +161,7 @@ class Smarty extends \Smarty
         $this->loader   = $loader ?? Services::locator();
         parent::__construct();
 
-        parent::setTemplateDir($viewPath);
+        // parent::setTemplateDir($viewPath);
         parent::setCompileDir((new \Codenom\Framework\Config\Cache())->compileCacheDir)->setCacheDir((new \Codenom\Framework\Config\Cache())->setCacheDir);
     }
 
@@ -227,7 +227,7 @@ class Smarty extends \Smarty
             throw ViewException::forInvalidFile($tpl_name);
         }
 
-
+        parent::setTemplateDir($this->viewPath);
         return $file;
     }
 }
