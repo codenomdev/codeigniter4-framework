@@ -56,7 +56,7 @@ class CoreConfigData extends Migration
 		$this->forge->addKey('scope');
 		$this->forge->addKey('scope_id');
 		$this->forge->addKey('path');
-		$this->forge->createTable('core_config_data', false);
+		$this->forge->createTable('core_config_data');
 	}
 
 	public function down()
