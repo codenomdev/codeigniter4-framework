@@ -9,7 +9,7 @@ This repo is maintained by Codenom Dev & volunteers. If you post an issue and ha
 
 - PHP 7.2+
 - CodeIgniter 4.
-- Smarty: ~3.1
+- Smarty: ~3.1 **[DEPRECATED]**
 - oauth2-server-php: ^1.10
 
 ## Features
