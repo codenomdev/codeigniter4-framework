@@ -20,7 +20,6 @@ class ObjectManager implements ObjectManagerInterface
     public function __construct($table = '')
     {
         $this->db = DB::use($table);
-        $this->table = $table;
     }
 
     public function where(array $data)
