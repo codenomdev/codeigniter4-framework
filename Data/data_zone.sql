@@ -1493,7 +1493,7 @@ INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (1554, 101, 'Kohkiluyeh and Buyer Ahmad', 'KBA', 1),
 (1555, 101, 'Bushehr', 'BSH', 1),
 (1556, 101, 'Fars', 'FAR', 1);
-INSERT INTO `oc_zone` (`zone_id`, `country_id`, `name`, `code`, `status`) VALUES
+INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (1557, 101, 'Hormozgan', 'HRM', 1),
 (1558, 101, 'Sistan and Baluchistan', 'SBL', 1),
 (1559, 101, 'Kerman', 'KRB', 1),
@@ -2994,7 +2994,7 @@ INSERT INTO `oc_zone` (`zone_id`, `country_id`, `name`, `code`, `status`) VALUES
 (3090, 203, 'Värmland', 'S', 1),
 (3091, 203, 'Västerbotten', 'AC', 1),
 (3092, 203, 'Västernorrland', 'Y', 1);
-INSERT INTO `oc_zone` (`zone_id`, `country_id`, `name`, `code`, `status`) VALUES
+INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (3093, 203, 'Västmanland', 'U', 1),
 (3094, 203, 'Västra Götaland', 'O', 1),
 (3095, 204, 'Aargau', 'AG', 1),

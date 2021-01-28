@@ -1,10 +1,13 @@
 <?php
 
-namespace Codenom\Framework\Config;
+/**
+ * @see       https://github.com/codenomdev/codeigniter4-framework for the canonical source repository
+ *
+ * @copyright 2020 - Codenom Dev (https://codenom.com).
+ * @license   https://github.com/codenomdev/codeigniter4-framework/blob/master/LICENSE MIT License
+ */
 
-// use CodeIgniter\Events\Events;
-// use CodeIgniter\Exceptions\FrameworkException;
-// use Codenom\Framework\Libraries\Menu\Item as MenuItem;
+namespace Codenom\Framework\Config;
 
 foreach (glob(APPPATH . 'Modules/*/Admin/Config', GLOB_ONLYDIR) as $events) {
     if (file_exists($events . '/Events.php')) {

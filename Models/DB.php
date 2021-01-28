@@ -7,22 +7,20 @@
  * @license   https://github.com/codenomdev/codeigniter4-framework/blob/master/LICENSE MIT License
  */
 
-namespace Codenom\Framework\Libraries\DataTables;
+namespace Codenom\Framework\Models;
 
-use Codenom\Framework\Libraries\DataTables\TableProcessor;
 use \Config\Database;
 
-class DataTables
+class DB implements DBInterface
 {
-
     public static function use($table)
     {
-        return self::create($table);
+        return SELF::create($table);
     }
 
     public static function create($table)
     {
         $db = Database::connect();
-        return new TableProcessor($db, $table);
+        return $db->table($table);
     }
 }
