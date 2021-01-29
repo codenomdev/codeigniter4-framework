@@ -140,7 +140,7 @@ class PrimaryNavbarFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
         $childBody .= '<div class="p-2">';
         $footerChildBody .= '</div>';
 
-        $menuChildren =  [
+        $menuChildren = [
             'name' => 'User Card',
             'label' => 'User Card',
             'attributes' => [

@@ -26,14 +26,17 @@ class DataProcessor
 
     public function process()
     {
-        if (!empty($this->processColumn['appends']))
+        if (!empty($this->processColumn['appends'])) {
             $this->addColumns();
+        }
 
-        if (!empty($this->processColumn['edit']))
+        if (!empty($this->processColumn['edit'])) {
             $this->editColumns();
+        }
 
-        if (!empty($this->processColumn['hidden']))
+        if (!empty($this->processColumn['hidden'])) {
             $this->hide();
+        }
 
         $this->escapeColumns();
 

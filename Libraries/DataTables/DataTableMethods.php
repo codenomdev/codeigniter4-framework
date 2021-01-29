@@ -97,7 +97,9 @@ abstract class DataTableMethods
             'data' => $results
         ];
 
-        if ($make) return $formatter->format($output);
+        if ($make) {
+            return $formatter->format($output);
+        }
         return d($output);
     }
 

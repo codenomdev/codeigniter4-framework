@@ -105,7 +105,7 @@ class TableProcessor extends DataTableMethods
     {
         $result = $this->db->get();
 
-        $processor =  new DataProcessor(
+        $processor = new DataProcessor(
             $result,
             $this->processColumn
         );
