@@ -13,6 +13,7 @@ class BreadcrumbFactory
 {
     private $breadcrumbHtml = '';
     protected $clikable = TRUE;
+    protected $breadcrumb = [];
 
     public function addToBreadcrumb($link, $text)
     {
