@@ -13,9 +13,14 @@ use Codenom\Framework\Data\Country\CountryManager;
 
 class DataCollection
 {
-    public function countryConvertToHtml()
+    /**
+     * Country Dropdown html
+     * 
+     * @param string $defaultValue
+     * @return string
+     */
+    public function countryConvertToHtml($defaultValue = '')
     {
-        // helper('')
         $country = new CountryManager();
         $result = [];
         $html = '';
@@ -24,7 +29,7 @@ class DataCollection
             $result[$value->country_id] = $value->country_name;
         }
 
-        $html .= \add_field_dropdown('country_id', $result, set_value('country_id'), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
+        $html .= \add_field_dropdown('country_id', $result, set_value('country_id', $defaultValue), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
         return $html;
     }
 }

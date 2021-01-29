@@ -31,8 +31,17 @@ class CountryModel extends Model
     protected $validationMessages = [];
     protected $skipValidation = false;
 
+    protected $beforeUpdate = ['beforeUpdate'];
+
     public function deleteCountry(int $id)
     {
         return $this->db->table('country')->where('id', $id)->delete();
+    }
+
+    protected function beforeUpdate($data)
+    {
+        cache()->delete($data['id'][0] . '_countryData');
+
+        return $data;
     }
 }

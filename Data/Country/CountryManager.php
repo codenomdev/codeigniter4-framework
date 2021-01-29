@@ -38,9 +38,9 @@ class CountryManager
      */
     public function getCollection()
     {
-        if (!$found = cache('_countryCollect')) {
-            $found = $this->objectManager->load()->getResult();
-            cache()->save('_countryCollection', $found, 300);
+        if (!$found = cache('_countryCollection')) {
+            $found = $this->objectManager->ordering('name', ' ASC')->load()->getResult();
+            cache()->save('_countryCollection', $found, 3600);
         }
         return $found;
     }
@@ -53,7 +53,10 @@ class CountryManager
      */
     public function getByName(string $name)
     {
-        return $this->objectManager->where(['name' => $name])->load()->getRow();
+        if (!$found = cache($name . '_countryData')) {
+            $found = $this->objectManager->where(['name' => $name])->load()->getRow();
+        }
+        return $found;
     }
 
     /**
@@ -64,7 +67,25 @@ class CountryManager
      */
     public function getById(int $country_id)
     {
-        return $this->objectManager->where(['id' => $country_id])->load()->getRow();
+        if (!$found = cache($country_id . '_countryData')) {
+            $found = $this->objectManager->where(['id' => $country_id])->load()->getRow();
+            cache()->save($country_id . '_countryData', $found, 3600);
+        }
+        return $found;
+    }
+
+    /**
+     * Spesific selecting field/'s table
+     * 
+     * @param string|array $select
+     *                     Example: 'id, name, etc..' or ['id', 'name'].
+     *                     Support aliase of name fields table.
+     * @return mixed 
+     */
+    public function select($select)
+    {
+        $this->objectManager->select($select);
+        return $this;
     }
 
     /**
