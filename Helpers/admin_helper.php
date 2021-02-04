@@ -24,14 +24,14 @@ helper('form');
 if (!function_exists('admin_static')) {
     function admin_static(string $str): string
     {
-        return base_url('static/adminhtml/' . $str);
+        return \base_url('static/adminhtml/' . $str);
     }
 }
 
 if (!function_exists('admin_url')) {
     function admin_url(string $uri): string
     {
-        return base_url('backend/' . $uri);
+        return \base_url('backend/' . $uri);
     }
 }
 
@@ -126,6 +126,32 @@ if (!function_exists('add_field_text')) {
         $inputHtml .= $attributes['endCol'];
         $inputHtml .= $attributes['endRow'];
 
+        return $inputHtml;
+    }
+}
+if (!function_exists('add_field_textarea')) {
+    /**
+     * Textarea field
+     *
+     * @param mixed  $data
+     * @param string $value
+     * @param mixed  $extra
+     *
+     * @return string
+     */
+    function add_field_textarea($data = '', string $value = '', $extra = ''): string
+    {
+        $attributes = builderHtml($data, $extra);
+        $inputHtml = '';
+        $inputHtml .= $attributes['row'];
+        $inputHtml .= $attributes['label'];
+        $inputHtml .= $attributes['col'];
+        $components = ['class' => $attributes['inputClass'], 'id' => $attributes['inputId']];
+        $extras = array_merge($components, $extra);
+        unset($extras['label']);
+        $inputHtml .= form_textarea($data, $value, $extras);
+        $inputHtml .= $attributes['endCol'];
+        $inputHtml .= $attributes['endRow'];
         return $inputHtml;
     }
 }

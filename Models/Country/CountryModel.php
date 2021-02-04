@@ -32,14 +32,24 @@ class CountryModel extends Model
     protected $skipValidation = false;
 
     protected $beforeUpdate = ['beforeUpdate'];
+    protected $beforeInsert = ['beforeInsert'];
 
     public function deleteCountry(int $id)
     {
+        cache()->delete('_countryCollection');
+        cache()->delete($id . '_countryData');
         return $this->db->table('country')->where('id', $id)->delete();
+    }
+
+    protected function beforeInsert($data)
+    {
+        cache()->delete('_countryCollection');
+        return $data;
     }
 
     protected function beforeUpdate($data)
     {
+        cache()->delete('_countryCollection');
         cache()->delete($data['id'][0] . '_countryData');
 
         return $data;

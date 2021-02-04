@@ -65,6 +65,7 @@ class PrimaryNavbarFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
             'headingHtml' => $headingHtml,
             'bodyHtml' => $bodyHtml,
             'footerHtml' => $footerHtml,
+            'order' => 2,
             'children' => [
                 [
                     'name' => 'headingNotification',
@@ -146,6 +147,7 @@ class PrimaryNavbarFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
             'attributes' => [
                 'class' => 'dropdown d-inline-block ml-2',
             ],
+            'order' => 1,
             'headingHtml' => $headingHtml,
             'bodyHtml' => $bodyHtml,
             'footerHtml' => $footerHtml,

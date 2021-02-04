@@ -65,6 +65,36 @@ class ObjectManager implements ObjectManagerInterface
         return $this;
     }
 
+    public function groupStart()
+    {
+        $this->db->groupStart();
+        return $this;
+    }
+
+    public function groupEnd()
+    {
+        $this->db->groupEnd();
+        return $this;
+    }
+
+    public function orGroupStart()
+    {
+        $this->db->orGroupStart();
+        return $this;
+    }
+
+    public function groupBy($group)
+    {
+        $this->db->groupBy($group);
+        return $this;
+    }
+
+    public function having($having)
+    {
+        $this->db->having($having);
+        return $this;
+    }
+
     public function setAliases($fields): bool
     {
         foreach (explode(',', $fields) as $val) {

@@ -10,7 +10,6 @@
 namespace Codenom\Framework\Models\Zone;
 
 use CodeIgniter\Model;
-use Codenom\Framework\Data\Country\CountryManager;
 use Codenom\Framework\Entities\Zone\ZoneEntity;
 
 class ZoneModel extends Model
@@ -37,12 +36,15 @@ class ZoneModel extends Model
 
     public function deleteZone(int $id)
     {
+        cache()->delete($id . '_zoneData');
+        cache()->delete($id . '_zoneCountryCollection');
         return $this->db->table($this->table)->where(['id' => $id])->delete();
     }
 
     protected function beforeUpdate($data)
     {
         cache()->delete($data['id'][0] . '_zoneData');
+        cache()->delete($data['id'][0] . '_zoneCountryCollection');
 
         return $data;
     }

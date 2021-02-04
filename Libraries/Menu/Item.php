@@ -333,8 +333,20 @@ class Item extends \Knp\Menu\MenuItem
         static::sort($parent, false);
         $siblings = $parent->getChildren();
         reset($siblings);
-        while (list($name) = each($siblings)) {
-            if ($name == $this->getName()) {
+
+        /**
+         * DEPRECATED FUNCTION on PHP 7.2
+         * 
+         */
+        // while (list($name) = each($siblings)) {
+        //     if ($name == $this->getName()) {
+        //         current($siblings);
+        //         (current($siblings) === false ? end($siblings) : prev($siblings));
+        //         break;
+        //     }
+        // }
+        foreach ((array) $siblings as $key => $value) {
+            if ($value == $this->getName()) {
                 current($siblings);
                 (current($siblings) === false ? end($siblings) : prev($siblings));
                 break;

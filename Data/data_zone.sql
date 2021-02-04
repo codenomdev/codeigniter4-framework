@@ -1,4 +1,4 @@
-INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
+
 (1, 1, 'Badakhshan', 'BDS', 1),
 (2, 1, 'Badghis', 'BDG', 1),
 (3, 1, 'Baghlan', 'BGL', 1),
@@ -1492,8 +1492,7 @@ INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (1553, 101, 'Chahar Mahaal and Bakhtiari', 'CMB', 1),
 (1554, 101, 'Kohkiluyeh and Buyer Ahmad', 'KBA', 1),
 (1555, 101, 'Bushehr', 'BSH', 1),
-(1556, 101, 'Fars', 'FAR', 1);
-INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
+(1556, 101, 'Fars', 'FAR', 1),
 (1557, 101, 'Hormozgan', 'HRM', 1),
 (1558, 101, 'Sistan and Baluchistan', 'SBL', 1),
 (1559, 101, 'Kerman', 'KRB', 1),
@@ -2993,8 +2992,7 @@ INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (3089, 203, 'Uppsala', 'C', 1),
 (3090, 203, 'Värmland', 'S', 1),
 (3091, 203, 'Västerbotten', 'AC', 1),
-(3092, 203, 'Västernorrland', 'Y', 1);
-INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
+(3092, 203, 'Västernorrland', 'Y', 1),
 (3093, 203, 'Västmanland', 'U', 1),
 (3094, 203, 'Västra Götaland', 'O', 1),
 (3095, 204, 'Aargau', 'AG', 1),
@@ -4108,4 +4106,4 @@ INSERT INTO `zone` (`id`, `country_id`, `name`, `code`, `status`) VALUES
 (4235, 100, 'Kepulauan Riau', 'KR', 1),
 (4236, 105, 'Barletta-Andria-Trani', 'BT', 1),
 (4237, 105, 'Fermo', 'FM', 1),
-(4238, 105, 'Monza Brianza', 'MB', 1);
+(4238, 105, 'Monza Brianza', 'MB', 1)

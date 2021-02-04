@@ -9,10 +9,14 @@
 
 namespace Codenom\Framework\Libraries\Html\Country;
 
-use Codenom\Framework\Data\Country\CountryManager;
+use Codenom\Framework\Libraries\Collection\CountryCollection;
 
 class DataCollection
 {
+    public function __construct()
+    {
+        helper('admin');
+    }
     /**
      * Country Dropdown html
      * 
@@ -21,15 +25,11 @@ class DataCollection
      */
     public function countryConvertToHtml($defaultValue = '')
     {
-        $country = new CountryManager();
+        $country = new CountryCollection();
         $result = [];
         $html = '';
-
-        foreach ($country->getLocale()->getCollection() as $key => $value) {
-            $result[$value->country_id] = $value->country_name;
-        }
-
-        $html .= \add_field_dropdown('country_id', $result, set_value('country_id', $defaultValue), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
+        $result = ['' => '-- Please Select --'];
+        $html .= \add_field_dropdown('country_id', $country->countryWithIndexId(), set_value('country_id', $defaultValue), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
         return $html;
     }
 }

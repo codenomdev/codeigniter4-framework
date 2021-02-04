@@ -9,6 +9,8 @@
 
 namespace Codenom\Framework\Admin\Menu;
 
+use CodeIgniter\Config\Services;
+
 class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
 {
     protected $rootItemName = 'Admin Menu';
@@ -33,7 +35,6 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
                 'uri' => admin_url('dashboard'),
                 'attributes' => ['icon' => 'si si-speedometer'],
                 'order' => 1,
-                'current' => admin_url('dashboard')
             ],
             [
                 'name' => 'Setting',
@@ -43,18 +44,22 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
                 'order' => 10,
                 'children' => [
                     [
+                        'name' => 'General',
+                        'label' => 'General',
+                        'uri' => admin_url('setting'),
+                        'order' => 1,
+                    ],
+                    [
                         'name' => 'Country',
                         'label' => 'Country',
                         'uri' => admin_url('setting/country'),
-                        'order' => 1,
-                        'current' => admin_url('setting/country')
+                        'order' => 2,
                     ],
                     [
                         'name' => 'Zone',
                         'label' => 'Zone',
                         'uri' => admin_url('setting/zone'),
-                        'order' => 2,
-                        'current' => admin_url('setting/zone')
+                        'order' => 3,
                     ]
                 ]
             ]

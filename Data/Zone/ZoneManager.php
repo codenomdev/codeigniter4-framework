@@ -3,10 +3,12 @@
 namespace Codenom\Framework\Data\Zone;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Data\Country\CountryManager;
 
 class ZoneManager
 {
     protected $objectManager;
+    protected $countryManager;
 
     public function __construct()
     {
@@ -47,7 +49,12 @@ class ZoneManager
      */
     public function getByIdCountry(int $id)
     {
-        return $this->objectManager->where(['country_id' => $id])->load()->getResult();
+        if (!$found = cache($id . '_zoneCountryCollection')) {
+            $found = $this->objectManager->where(['country_id' => $id])->load()->getResult();
+            cache()->save($id . '_zoneCountryCollection', $found, 3600);
+        }
+
+        return $found;
     }
 
     /**
@@ -72,6 +79,21 @@ class ZoneManager
     public function select($select)
     {
         $this->objectManager->select($select);
+        return $this;
+    }
+
+    /**
+     * Join table
+     * 
+     * @param string $table of table name
+     * @param string $cond condition
+     * @param string $type
+     * 
+     * @return mixed
+     */
+    public function join($table, $cond, $type = '')
+    {
+        $this->objectManager->join($table, $cond, $type);
         return $this;
     }
 

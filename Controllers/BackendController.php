@@ -10,16 +10,16 @@
 namespace Codenom\Framework\Controllers;
 
 /**
- * Class BaseController
+ * Class BackendController
  *
- * BaseController provides a convenient place for loading components
+ * BackendController provides a convenient place for loading components
  * and performing functions that are needed by all your controllers.
  * Extend this class in any new controllers:
- *     class Home extends BaseController
+ *     class Home extends BackendController
  *
  * For security be sure to declare any new methods as protected or private.
  *
- * @package CodeIgniter
+ * @package Codenom/Framework
  */
 
 use CodeIgniter\Controller;
@@ -67,6 +67,21 @@ class BackendController extends Controller
     protected $helpers = [];
 
     /**
+     * @var \CodeIgniter\HTPP\RequestInterface
+     */
+    protected $request;
+
+    /**
+     * @var \CodeIgniter\HTTP\ResponseInterface
+     */
+    protected $response;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor.
      */
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
@@ -79,6 +94,9 @@ class BackendController extends Controller
         //--------------------------------------------------------------------
         // E.g.:
         $this->session = \Config\Services::session();
+        $this->request = $request;
+        $this->logger = $logger;
+        $this->response = $response;
         \helper(['admin', 'html']);
         $this->render = \Config\Services::renderer();
         $this->getData();
@@ -161,8 +179,8 @@ class BackendController extends Controller
             'metaTitle' => $this->metaTitle(),
             'displayTitle' => $this->getDisplayTitle(),
             'subDisplayTitle' => $this->subDisplayTitle(),
-            'navbarMenu' => $this->menuLoaded()->primaryNavbar(),
-            'adminMenu' => $this->menuLoaded()->adminMenu(),
+            'navbarMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->primaryNavbar()),
+            'adminMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->adminMenu()),
             'breadcrumb' => $this->addToBreadCrumb()->getBreadcrumb(),
         ]);
     }
