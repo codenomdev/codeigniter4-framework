@@ -13,8 +13,11 @@ use Codenom\Framework\Data\ObjectManager\ObjectManager;
 
 class SettingManager
 {
+
+    /**
+     * @var Codenom\Framework\Data\ObjectManager\ObjectManager
+     */
     protected $objectManager;
-    protected $countryManager;
 
     public function __construct()
     {
@@ -23,15 +26,13 @@ class SettingManager
 
     public function getGroupSettingByScope()
     {
-        //SELECT id, code, value, GROUP_CONCAT(code SEPARATOR ' ') FROM setting GROUP BY scope
         return $this->objectManager
             ->select('scope')
-            // ->select('scope')
             ->groupBy('scope')
-            // ->where(['scope' => 'general'])
             ->load()
             ->getResult();
     }
+
     /**
      * Prepare load Setting
      * 

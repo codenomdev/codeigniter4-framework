@@ -13,6 +13,10 @@ use Codenom\Framework\Models\DB;
 
 class ObjectManager implements ObjectManagerInterface
 {
+
+    /**
+     * @var Codenom\Framework\Models\DB
+     */
     protected $db;
     protected $fields;
     protected $aliases = [];

@@ -7,11 +7,11 @@
  * @license   https://github.com/codenomdev/codeigniter4-framework/blob/master/LICENSE MIT License
  */
 
-namespace Codenom\Framework\Data\Zone;
+namespace Codenom\Framework\Data\Currency;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
 
-class ZoneManager
+class CurrencyManager
 {
 
     /**
@@ -21,60 +21,64 @@ class ZoneManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('zone');
+        $this->objectManager = new ObjectManager('currency');
     }
 
     /**
-     * Prepare load Zone
+     * Prepare load Country
      * 
      * @return mixed
      */
-    public function getZone()
+    public function getCurrency()
     {
         $this->selectTable();
         return $this;
     }
 
     /**
-     * Get Zone by ID Zone
+     * Get Setting Collection
+     * 
+     * @return obj
+     */
+    public function getCollection()
+    {
+        if (!$found = cache('currencyCollection')) {
+            $found = $this->objectManager->load()->getResult();
+            cache()->save('currencyCollection', $found, 3600);
+        }
+        return $found;
+    }
+
+    /**
+     * Get Currency by id
      * 
      * @param int $id
      * @return obj
      */
     public function getById(int $id)
     {
-        if (!$found = cache($id . '_zoneData')) {
+        if (!$found = cache($id . '_currencyById')) {
             $found = $this->objectManager->where(['id' => $id])->load()->getRow();
-            cache()->save($id . '_zoneData', $found, 3600);
-        }
-        return $found;
-    }
-
-    /**
-     * Get zone by ID Country
-     * 
-     * @param int $id
-     * @return obj
-     */
-    public function getByIdCountry(int $id)
-    {
-        if (!$found = cache($id . '_zoneCountryCollection')) {
-            $found = $this->objectManager->where(['country_id' => $id])->load()->getResult();
-            cache()->save($id . '_zoneCountryCollection', $found, 3600);
+            cache()->save($id . '_currencyById', $found, 3600);
         }
 
         return $found;
     }
 
     /**
-     * Get zone by Code Zone
+     * Get Currency by Code
      * 
      * @param string $code
      * @return obj
      */
     public function getByCode(string $code)
     {
-        return $this->objectManager->where(['code' => $code])->load()->getRow();
+        if (!$found = cache($code . '_currencyByCode')) {
+            $found = $this->objectManager->where(['code' => $code])->load()->getRow();
+            cache()->save($code . '_currencyByCode', $found, 3600);
+        }
+
+        return $found;
     }
 
     /**
@@ -92,29 +96,27 @@ class ZoneManager
     }
 
     /**
-     * Join table
+     * Where
      * 
-     * @param string $table of table name
-     * @param string $cond condition
-     * @param string $type
-     * 
-     * @return mixed
+     * @param string|array $select
+     *                     Example: 'id, name, etc..' or ['id', 'name'].
+     * @return mixed 
      */
-    public function join($table, $cond, $type = '')
+    public function where($where)
     {
-        $this->objectManager->join($table, $cond, $type);
+        $this->objectManager->where($where);
         return $this;
     }
 
     /**
-     * Zone select table
+     * Currency select table
      * 
      * @var \Codenom\Framework\Data\ObjectManager\ObjectManager
      * @return mixed
      */
     private function selectTable()
     {
-        $this->objectManager->select('id as zone_id, country_id, name, code, status');
+        $this->objectManager->select('id as currency_id, title as currency_title, code as currency_code, symbol_left, symbol_right, decimal_places, value as currency_values, status as currency_status, created_at, updated_at, deleted_at');
         return $this;
     }
 }

@@ -22,6 +22,10 @@ use Codenom\Framework\Libraries\Form\Country\CountryFactoryInterface;
  */
 class CountryFactory implements CountryFactoryInterface
 {
+
+    /**
+     * @var Codenom\Framework\Data\Country\CountryManager
+     */
     protected $countryManager;
 
     public function __construct()

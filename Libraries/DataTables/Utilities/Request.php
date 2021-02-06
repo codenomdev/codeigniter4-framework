@@ -14,6 +14,9 @@ use CodeIgniter\Config\Services;
 class Request
 {
 
+    /**
+     * @var CodeIgniter\Config\Services::request
+     */
     private $request;
 
     public function __construct()

@@ -13,6 +13,10 @@ use Codenom\Framework\Data\Setting\SettingManager;
 
 class SettingCollection
 {
+
+    /**
+     * @var Codenom\Framework\Data\Setting\SettingManager
+     */
     protected $settingManager;
 
     public function __construct()
@@ -23,44 +27,14 @@ class SettingCollection
 
     public function settingCollection()
     {
-        // $data = [];
-        // $data[] = $this->allowRegistration();
-        // $data[] = $this->allowRemembering();
         $attribute = [];
         $setting = $this->settingManager->getGroupSettingByScope();
         foreach ($setting as $key => $value) {
             $get = $this->settingManager->getSetting()->getByScope($value->scope);
             $attribute[$key] = $this->attributesInput($value->scope, $get);
         }
-        // $attribute = $this->attributesInput('config', $setting);
         return $attribute;
     }
-
-    /**
-     * Get dropdown allow registration
-     * 
-     * @return string
-     */
-    // public function allowRegistration()
-    // {
-    //     $get = $this->settingManager->getSetting()->getByKey('allow_registration');
-    //     $attribute = $this->attributesInput($get->setting_key);
-    //     $dropdown = add_field_dropdown($attribute['name'], get_status(), set_value($attribute['name'], $get->setting_value), $attribute);
-    //     return $dropdown;
-    // }
-
-    // /**
-    //  * Allow Remembering
-    //  * 
-    //  * @return string
-    //  */
-    // public function allowRemembering()
-    // {
-    //     $get = $this->settingManager->getSetting()->getByKey('allow_remembering');
-    //     $attribute = $this->attributesInput($get->setting_key);
-    //     $dropdown = add_field_dropdown($attribute['name'], get_status(), set_value($attribute['name'], $get->setting_value), $attribute);
-    //     return $dropdown;
-    // }
 
     /**
      * Set a attribute form input

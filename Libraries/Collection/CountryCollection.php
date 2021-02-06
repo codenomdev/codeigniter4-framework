@@ -13,6 +13,10 @@ use Codenom\Framework\Data\Country\CountryManager;
 
 class CountryCollection
 {
+
+    /**
+     * @var Codenom\Framework\Data\Country\CountryManager
+     */
     protected $countryManager;
 
     public function __construct()
