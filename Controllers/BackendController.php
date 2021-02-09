@@ -135,6 +135,7 @@ class BackendController extends Controller
         }
         return $getBreadcrumb;
     }
+
     public function metaTitle(string $metaTitle = ''): string
     {
 
@@ -148,7 +149,7 @@ class BackendController extends Controller
             $keys = array_keys($getUrl);
             if (end($keys) == $key) {
                 // $this->metaTitle .= ';w';
-                $this->metaTitle .= str_replace(' / ', '', $this->metaTitle);
+                $this->metaTitle .= str_replace(' / ', '', $val);
             } else {
                 $this->metaTitle .= $val . ' / ';
             }

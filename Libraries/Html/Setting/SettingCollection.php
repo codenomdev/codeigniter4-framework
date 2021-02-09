@@ -48,7 +48,8 @@ class SettingCollection
         $result['meta'] = lang('Setting.title.' . $key);
         foreach ($param as $keys => $value) {
             $settingKey = $value->setting_key;
-            $names = $key . '[' . $settingKey . ']';
+            $settingScope = $value->setting_scope;
+            $names =  'groups[' . $key . '][fields][' . $settingKey . '][value]';
             $label = lang('Setting.label.' . $settingKey);
             $attId = ucfirst($settingKey);
             $value = $value->setting_value;
@@ -58,6 +59,7 @@ class SettingCollection
                 'label' => $label,
                 'id' => $attId,
                 'value' => $value,
+                'validation' => $settingScope . '.' . $settingKey,
             ];
         }
 

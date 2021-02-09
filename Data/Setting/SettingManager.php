@@ -26,11 +26,16 @@ class SettingManager
 
     public function getGroupSettingByScope()
     {
-        return $this->objectManager
-            ->select('scope')
-            ->groupBy('scope')
-            ->load()
-            ->getResult();
+        if (!$found = cache('scopeSettingCollection')) {
+            $found = $this->objectManager
+                ->select('scope')
+                ->groupBy('scope')
+                ->load()
+                ->getResult();
+            cache()->save('scopeSettingCollection', $found, 3600);
+        }
+
+        return $found;
     }
 
     /**

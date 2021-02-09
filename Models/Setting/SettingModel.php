@@ -11,6 +11,7 @@ namespace Codenom\Framework\Models\Setting;
 
 use CodeIgniter\Model;
 use Codenom\Framework\Entities\Setting\SettingEntity;
+use Codenom\Framework\Data\Setting\SettingManager;
 
 class SettingModel extends Model
 {
@@ -20,17 +21,21 @@ class SettingModel extends Model
     protected $returnType = SettingEntity::class;
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['code', 'key', 'value'];
+    protected $allowedFields = ['value'];
     protected $useTimestamps = false;
-    protected $validationRules = [
-        'code' => 'required|min_length[3]|max_length[15]',
-        'key' => 'required|min_length[3]|max_length[50]',
-        'value' => 'trim',
-    ];
+
+    // protected $beforeUpdate = ['beforeUpdate'];
+    // protected $validationRules = [
+    //     'code' => 'required|min_length[3]|max_length[15]',
+    //     'key' => 'required|min_length[3]|max_length[50]',
+    // ];
 
     protected $validationMessages = [];
     protected $skipValidation = false;
 
+    // public function updateSetting($key, $post){
+    //     $this->db->update($key, )
+    // }
     // public function deleteZone(int $id)
     // {
     //     cache()->delete($id . '_zoneData');
@@ -40,9 +45,7 @@ class SettingModel extends Model
 
     // protected function beforeUpdate($data)
     // {
-    //     cache()->delete($data['id'][0] . '_zoneData');
-    //     cache()->delete($data['id'][0] . '_zoneCountryCollection');
-
+    //     cache()->clean();
     //     return $data;
     // }
 }

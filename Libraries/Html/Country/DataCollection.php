@@ -29,7 +29,7 @@ class DataCollection
         $result = [];
         $html = '';
         $result = ['' => '-- Please Select --'];
-        $html .= \add_field_dropdown('country_id', array_merge($result, $country->countryWithIndexId()), set_value('country_id', $defaultValue), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
+        $html .= \add_field_dropdown('country_id', $country->countryWithIndexId(), set_value('country_id', $defaultValue), ['label' => 'Name Country', 'id' => 'NameCountry', 'class' => 'js-select2 form-control']);
         return $html;
     }
 }

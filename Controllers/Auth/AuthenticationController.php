@@ -12,11 +12,17 @@ namespace Codenom\Framework\Controllers\Auth;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Codenom\Framework\Config\Auth\AuthManager;
 use Psr\Log\LoggerInterface;
 use Codenom\Framework\Libraries\Auth\Authentication;
 
 class AuthenticationController extends Controller
 {
+    /**
+     * @var \Codenom\Framework\Config\Auth\AuthManager
+     */
+    protected $authManager;
+
     /**
      * @var \Myth\Auth\Config\Auth
      */
@@ -71,6 +77,7 @@ class AuthenticationController extends Controller
         $this->render = \Config\Services::renderer();
         $this->config = config('AuthConfig');
         $this->auth = service('authentication');
+        $this->authManager = new AuthManager();
 
         if ($this->auth->check()) {
             $redirectURL = session('redirect_url') ?? '/';
@@ -86,6 +93,7 @@ class AuthenticationController extends Controller
     private function getData()
     {
         return $this->render->setData([
+            'allowRegistration' => $this->authManager->allowRegistration(),
             'config' => $this->config,
         ]);
     }
