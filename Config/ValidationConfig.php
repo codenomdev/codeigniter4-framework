@@ -11,9 +11,6 @@ namespace Codenom\Framework\Config;
 
 class ValidationConfig
 {
-    // public $ruleSets = [
-    //     \Codenom\Framework\Config\Country\CountryRules::class,
-    // ];
     /**
      * Stores the classes that contain the
      * rules that are available.
@@ -49,6 +46,98 @@ class ValidationConfig
         ],
         'country_default.value' => [
             'rules' => 'required|country_list',
+        ],
+    ];
+
+    //--------------------------------------------------------------------
+    // Set a Add Country Rules
+    //--------------------------------------------------------------------
+    public $addCountry = [
+        'name' => [
+            'label' => 'Country.form.label.nameCountry',
+            'rules' => 'required|min_length[3]|max_length[25]',
+        ],
+        'iso_code_2' => [
+            'label' => 'Country.form.label.isoCode2',
+            'rules' => 'required|iso_code_2',
+        ],
+        'iso_code_3' => [
+            'label' => 'Country.form.label.isoCode3',
+            'rules' => 'required|iso_code_3',
+        ],
+        'status' => [
+            'label' => 'Status',
+            'rules' => 'required|in_list[0,1]',
+        ],
+    ];
+
+    //--------------------------------------------------------------------
+    // Set a Edit Country Rules
+    //--------------------------------------------------------------------
+    public $editCountry = [
+        'id' => [
+            'rules' => 'required|is_natural_no_zero',
+        ],
+        'name' => [
+            'label' => 'Country.form.label.nameCountry',
+            'rules' => 'required|min_length[3]|max_length[25]',
+        ],
+        'iso_code_2' => [
+            'label' => 'Country.form.label.isoCode2',
+            'rules' => 'required|iso_code_2',
+        ],
+        'iso_code_3' => [
+            'label' => 'Country.form.label.isoCode3',
+            'rules' => 'required|iso_code_3',
+        ],
+        'status' => [
+            'label' => 'Status',
+            'rules' => 'required|in_list[0,1]',
+        ],
+    ];
+
+    //--------------------------------------------------------------------
+    // Set a Add Zone Rules
+    //--------------------------------------------------------------------
+    public $addZone = [
+        'country_id' => [
+            'label' => 'Country.form.label.nameCountry',
+            'rules' => 'required|country_list',
+        ],
+        'name' => [
+            'label' => 'Zone.form.label.nameZone',
+            'rules' => 'required|min_length[3]|max_length[50]',
+        ],
+        'code' => [
+            'label' => 'Zone.form.label.codeZone',
+            'rules' => 'required|iso_code_3',
+        ],
+        'status' => [
+            'rules' => 'required|in_list[1,0]'
+        ],
+    ];
+
+    //--------------------------------------------------------------------
+    // Set a Edit Zone Rules
+    //--------------------------------------------------------------------
+    public $editZone = [
+        'zone_id' => [
+            'rules' => 'required|is_natural_no_zero',
+        ],
+        'country_id' => [
+            'label' => 'Country.form.label.nameCountry',
+            'rules' => 'required|country_list',
+        ],
+        'name' => [
+            'label' => 'Zone.form.label.nameZone',
+            'rules' => 'required|min_length[3]|max_length[50]',
+        ],
+        'code' => [
+            'label' => 'Zone.form.label.codeZone',
+            'rules' => 'required|iso_code_3',
+        ],
+        'status' => [
+            'rules' => 'required|in_list[1,0]'
         ],
     ];
 

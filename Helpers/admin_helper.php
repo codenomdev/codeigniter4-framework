@@ -188,7 +188,7 @@ if (!function_exists('add_field_submit')) {
     {
         $html = '';
         $html = '<div class="d-flex justify-content-end">';
-        $extra = ['class' => 'btn btn-primary btn-square', 'type' => 'submit', 'content' => 'Save'];
+        $extra = ['class' => 'btn btn-primary btn-square', 'type' => 'submit', 'content' => lang('Form.button.save')];
         $html .= '<div>';
         $html .= form_button($extra);
         $html .= '</div>';
