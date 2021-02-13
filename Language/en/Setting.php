@@ -16,6 +16,7 @@ return [
     'label' => [
         'country_default' => 'Default Country',
         'currency_default' => 'Default Currency',
+        'datetime_default' => 'Default TimeZone',
         'allow_registration' => 'Allow Registration',
         'allow_remembering' => 'Allow Remembering',
         'require_activation' => 'Require Activation',

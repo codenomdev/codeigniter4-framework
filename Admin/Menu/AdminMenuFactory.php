@@ -50,16 +50,22 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
                         'order' => 1,
                     ],
                     [
+                        'name' => 'Currency',
+                        'label' => 'Currency',
+                        'uri' => admin_url('setting/currency'),
+                        'order' => 2
+                    ],
+                    [
                         'name' => 'Country',
                         'label' => 'Country',
                         'uri' => admin_url('setting/country'),
-                        'order' => 2,
+                        'order' => 3,
                     ],
                     [
                         'name' => 'Zone',
                         'label' => 'Zone',
                         'uri' => admin_url('setting/zone'),
-                        'order' => 3,
+                        'order' => 4,
                     ]
                 ]
             ]
