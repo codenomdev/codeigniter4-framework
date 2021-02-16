@@ -13,6 +13,21 @@ use Codenom\Framework\Models\DB;
 
 class ObjectManager implements ObjectManagerInterface
 {
+    /**
+     * If this model should use "softDeletes" and
+     * simply set a date when rows are deleted, or
+     * do hard deletes.
+     *
+     * @var boolean
+     */
+    protected $useSoftDeletes;
+
+    /**
+     * The column used to save soft delete state
+     *
+     * @var string
+     */
+    protected $deletedField = 'deleted_at';
 
     /**
      * @var Codenom\Framework\Models\DB
@@ -21,9 +36,11 @@ class ObjectManager implements ObjectManagerInterface
     protected $fields;
     protected $aliases = [];
 
-    public function __construct($table = '')
+    public function __construct($table = '', bool $useSoftDeletes = false)
     {
         $this->db = DB::use($table);
+        $this->table = $table;
+        $this->useSoftDeletes = $useSoftDeletes;
     }
 
     public function where(array $data)
@@ -54,7 +71,8 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function load()
     {
-        return $this->db->get();
+        return $this->filterDelete()->get();
+        //  $this->db->get();
     }
 
     public function ordering($order)
@@ -111,5 +129,15 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         return true;
+    }
+
+    public function filterDelete()
+    {
+        $doDeleted = $this->db;
+        if ($this->useSoftDeletes) {
+            $doDeleted = $this->db->where($this->table . '.' . $this->deletedField . ' IS NULL');
+        }
+
+        return $doDeleted;
     }
 }

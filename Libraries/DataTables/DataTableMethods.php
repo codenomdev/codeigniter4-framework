@@ -38,6 +38,19 @@ abstract class DataTableMethods
         return $this;
     }
 
+    /**
+     * Hide data by deleted_at
+     * 
+     * @param string name of field
+     *               Example: deleted_at
+     * Logic, if deleted_at is null
+     */
+    public function hideDelete(string $field = 'deleted_at')
+    {
+        $this->db->where($field . ' IS NULL');
+        return $this;
+    }
+
     public function where(array $data)
     {
         $this->db->where($data);

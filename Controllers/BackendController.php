@@ -31,7 +31,7 @@ class BackendController extends Controller
     /**
      * @var \Config\Services::renderer()
      */
-    protected $render;
+    protected $renderer;
 
     /**
      * Meta title
@@ -55,7 +55,7 @@ class BackendController extends Controller
      * Clikable Breadcrumb
      * @var bool
      */
-    protected $clikable = TRUE;
+    private $clikable = TRUE;
 
     /**
      * An array of helpers to be loaded automatically upon
@@ -82,6 +82,21 @@ class BackendController extends Controller
     protected $logger;
 
     /**
+     * @var array;
+     */
+    private $setData = [];
+
+    /**
+     * @var string
+     */
+    private $render = '';
+
+    /**
+     * @var array
+     */
+    private $setVar = [];
+
+    /**
      * Constructor.
      */
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
@@ -98,11 +113,62 @@ class BackendController extends Controller
         $this->logger = $logger;
         $this->response = $response;
         \helper(['admin', 'html']);
-        $this->render = \Config\Services::renderer();
+        $this->renderer = \Config\Services::renderer();
         $this->getData();
     }
 
-    protected function menuLoaded()
+    /**
+     * Sets several pieces of view data at once.
+     *
+     * @param array  $data
+     * @param string $context The context to escape it for: html, css, js, url
+     *                        If null, no escaping will happen
+     *
+     * @return mixed
+     */
+    protected function setData(array $data = [], string $context = null)
+    {
+        $this->setData = $this->renderer->setData($data, $context);
+        return $this;
+    }
+
+    /**
+     * Sets a single piece of view data.
+     *
+     * @param string $name
+     * @param mixed  $value
+     * @param string $context The context to escape it for: html, css, js, url
+     *                        If null, no escaping will happen
+     *
+     * @return mixed
+     */
+    protected function setVar(string $name, $value, string $context = null)
+    {
+        $this->setVar = $this->renderer->setVar($name, $value, $context);
+        return $this;
+    }
+
+    /**
+     * Builds the output based upon a file name and any
+     * data that has already been set.
+     *
+     * Valid $options:
+     *     - cache 		number of seconds to cache for
+     *  - cache_name	Name to use for cache
+     *
+     * @param string       $view
+     * @param array|null   $options
+     * @param boolean|null $saveData
+     *
+     * @return string
+     */
+    protected function render(string $view = '', array $option = [], bool $saveData = false)
+    {
+        $this->render = $this->renderer->render($view, $option, $saveData);
+        return $this->render;
+    }
+
+    private function menuLoaded()
     {
         $menu = new \Codenom\Framework\Admin\Menu\PrimaryNavbarFactory();
         $adminMenu = new \Codenom\Framework\Admin\Menu\AdminMenuFactory();
@@ -112,22 +178,10 @@ class BackendController extends Controller
         return $repository;
     }
 
-    public function addToBreadCrumb()
+    protected function addToBreadCrumb()
     {
         $getBreadcrumb = new BreadcrumbFactory();
-        // $getTotal = $this->request->uri->getTotalSegments();
-        // for ($i = 1; $getTotal > $i; $i++) {
-        //     $link = $this->request->uri->getSegment($getTotal);
-        //     $label = \ucfirst($this->request->uri->getSegment($getTotal));
-        //     $getBreadcrumb->addToBreadcrumb($link, $label);
-        // }
         $uriSegments = $this->request->uri->getSegments();
-        // $crumbs = array_filter($uriSegments);
-        // SUBTRACT 1 FROM COUNT IF THE LAST LINK IS TO NOT BE A LINK
-        // $count = count($crumbs);
-        // if ($this->clikable) {
-        //     $count = count($crumbs);
-        // }
         foreach ($uriSegments as $key => $value) {
             $text = \ucwords($value);
             $link = $value;
@@ -136,7 +190,7 @@ class BackendController extends Controller
         return $getBreadcrumb;
     }
 
-    public function metaTitle(string $metaTitle = ''): string
+    protected function metaTitle(string $metaTitle = ''): string
     {
 
         $getUrl = $this->request->uri->getSegments();
@@ -148,41 +202,40 @@ class BackendController extends Controller
         foreach ($getUrl as $key => $val) {
             $keys = array_keys($getUrl);
             if (end($keys) == $key) {
-                // $this->metaTitle .= ';w';
                 $this->metaTitle .= str_replace(' / ', '', $val);
             } else {
                 $this->metaTitle .= $val . ' / ';
             }
         }
-        // $this->metaTitle = $metaTitle;
         return \ucwords($this->metaTitle);
     }
 
-    public function setDisplayTitle(string $displayTitle = ''): string
+    protected function setDisplayTitle(string $displayTitle = ''): string
     {
         $this->displayTitle = $displayTitle;
         return $this->displayTitle;
     }
 
-    public function getDisplayTitle()
+    protected function getDisplayTitle()
     {
         return $this->displayTitle;
     }
 
-    public function subDisplayTitle()
+    protected function subDisplayTitle()
     {
         return $this->subDisplayTitle;
     }
 
     protected function getData()
     {
-        return $this->render->setData([
-            'metaTitle' => $this->metaTitle(),
-            'displayTitle' => $this->getDisplayTitle(),
-            'subDisplayTitle' => $this->subDisplayTitle(),
-            'navbarMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->primaryNavbar()),
-            'adminMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->adminMenu()),
-            'breadcrumb' => $this->addToBreadCrumb()->getBreadcrumb(),
-        ]);
+        $setDefault = $this->setVar('metaTitle', $this->metaTitle(), 'html')
+            ->setVar('displayTitle', $this->getDisplayTitle(), 'html')
+            ->setVar('subDisplayTitle', $this->subDisplayTitle(), 'html')
+            ->setData([
+                'navbarMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->primaryNavbar()),
+                'adminMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->adminMenu()),
+                'breadcrumb' => $this->addToBreadCrumb()->getBreadcrumb(),
+            ]);
+        return $setDefault;
     }
 }

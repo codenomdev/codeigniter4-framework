@@ -21,7 +21,7 @@ class CurrencyManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('currency');
+        $this->objectManager = new ObjectManager('currency', true);
     }
 
     /**
