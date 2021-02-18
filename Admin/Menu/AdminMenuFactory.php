@@ -37,6 +37,27 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
                 'order' => 1,
             ],
             [
+                'name' => 'Users',
+                'label' => 'Users',
+                'uri' => '#',
+                'attributes' => ['icon' => 'si si-users'],
+                'order' => 2,
+                'children' => [
+                    [
+                        'name' => 'User Manage',
+                        'label' => 'User Manage',
+                        'uri' => admin_url('users/manage'),
+                        'order' => 1,
+                    ],
+                    [
+                        'name' => 'User Group',
+                        'label' => 'User Group',
+                        'uri' => admin_url('users/group'),
+                        'order' => 2,
+                    ]
+                ]
+            ],
+            [
                 'name' => 'Setting',
                 'label' => 'Pengaturan',
                 'uri' => '#',
