@@ -283,7 +283,7 @@ class File implements DriverInterface
         $result = @file_put_contents($this->getScheme() . $path, $content, $mode);
         if ($result === false) {
             throw new FileSystemException(
-                'The specified "%1" file couldn\'t be written. %2'
+                'The specified "' . $path . '" file couldn\'t be written. ' . $content
             );
         }
         return $result;

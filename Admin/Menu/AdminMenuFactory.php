@@ -54,7 +54,13 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
                         'label' => 'User Group',
                         'uri' => admin_url('users/group'),
                         'order' => 2,
-                    ]
+                    ],
+                    [
+                        'name' => 'Permission',
+                        'label' => 'Permission',
+                        'uri' => admin_url('users/permission/manage'),
+                        'order' => 3,
+                    ],
                 ]
             ],
             [

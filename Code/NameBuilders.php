@@ -21,4 +21,12 @@ class NameBuilders
         $className = ucwords($string, $separator);
         return $className;
     }
+
+    public function buildDirectoryNameSpace($parts)
+    {
+        $seperator = '/';
+        $string = str_replace('\\', $seperator, $parts);
+        $directory = ucwords($string);
+        return $directory;
+    }
 }
