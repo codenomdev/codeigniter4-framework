@@ -46,6 +46,10 @@ class XmlFileLoader
 
     /**
      * Parse Node
+     * 
+     * @param \DOMElement $node
+     * @param string $path
+     * @return array
      */
     protected function parseNode(\DOMElement $node, string $path)
     {
@@ -73,6 +77,10 @@ class XmlFileLoader
 
     /**
      * Parse Children
+     * 
+     * @param \DOMElement $node
+     * @param string $path
+     * @return array
      */
     private function parseChildren(\DOMElement $node, string $path)
     {
@@ -118,6 +126,11 @@ class XmlFileLoader
 
     /**
      * Parse Add
+     * Function for add menu
+     * 
+     * @param \DOMElement $node
+     * @param string $path
+     * @return array
      */
     private function parseAdd(\DOMElement $node, string $path)
     {
@@ -160,6 +173,11 @@ class XmlFileLoader
 
     /**
      * Parse Update
+     * Function for update menu
+     * 
+     * @param \DOMElement $node
+     * @param string $path
+     * @return array
      */
     private function parseUpdate(\DOMElement $node, string $path)
     {
@@ -193,6 +211,11 @@ class XmlFileLoader
 
     /**
      * Parse Attribute
+     * Function for attribute menu
+     * 
+     * @param \DOMElement $element
+     * @param string $path
+     * @return array
      */
     private function parseAttribute(\DOMElement $element, string $path)
     {
@@ -213,6 +236,12 @@ class XmlFileLoader
         return trim($element->textContent);
     }
 
+    /**
+     * Default value nill or null
+     * 
+     * @param \DOMElement $element
+     * @return bool
+     */
     private function isElementValueNull(\DOMElement $element): bool
     {
         $namespaceUri = 'http://www.w3.org/2001/XMLSchema-instance';
@@ -223,6 +252,7 @@ class XmlFileLoader
 
         return 'true' === $element->getAttributeNS($namespaceUri, 'nil') || '1' === $element->getAttributeNS($namespaceUri, 'nil');
     }
+
     /**
      * Loads an XML file.
      *

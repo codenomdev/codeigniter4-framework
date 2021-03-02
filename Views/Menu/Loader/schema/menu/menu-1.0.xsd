@@ -10,7 +10,7 @@
       Codenom XML Menu Schema, version 1.0
 
       This scheme defines the elements and attributes that can be used to define
-      routes. A route maps an HTTP request to a set of configuration variables.
+      menus.
     ]]></xsd:documentation>
   </xsd:annotation>
 
