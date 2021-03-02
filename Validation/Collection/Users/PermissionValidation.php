@@ -22,4 +22,14 @@ class PermissionValidation extends ValidationConfig
             'rules' => 'required|min_length[3]|max_length[20]',
         ],
     ];
+
+    //--------------------------------------------------------------------
+    // Set a Edit Permission Rules
+    //--------------------------------------------------------------------
+    public $editPermission = [
+        'name' => [
+            'label' => 'Name Permission',
+            'rules' => 'required|min_length[3]|max_length[20]'
+        ]
+    ];
 }

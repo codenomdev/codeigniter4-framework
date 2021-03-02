@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns="http://codenom.com/schema/menu"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://codenom.com/schema/menu"
+    elementFormDefault="qualified">
+
+  <xsd:annotation>
+    <xsd:documentation><![CDATA[
+      Codenom XML Menu Schema, version 1.0
+
+      This scheme defines the elements and attributes that can be used to define
+      routes. A route maps an HTTP request to a set of configuration variables.
+    ]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="menu">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="add" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType mixed="true">
+            <xsd:sequence>
+              <xsd:element name="attribute" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="key"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="parent" use="optional"/>
+            <xsd:attribute type="xsd:string" name="name" use="optional"/>
+            <xsd:attribute type="xsd:string" name="label" use="optional"/>
+            <xsd:attribute type="xsd:string" name="uri" use="optional"/>
+            <xsd:attribute type="xsd:int" name="sortOrder" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="children" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="attribute">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="key" use="optional"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="add" maxOccurs="unbounded" minOccurs="0">
+                <xsd:complexType mixed="true">
+                  <xsd:sequence>
+                    <xsd:element name="attribute" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:simpleContent>
+                          <xsd:extension base="xsd:string">
+                            <xsd:attribute type="xsd:string" name="key" use="optional"/>
+                          </xsd:extension>
+                        </xsd:simpleContent>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute type="xsd:string" name="name" use="optional"/>
+                  <xsd:attribute type="xsd:string" name="label" use="optional"/>
+                  <xsd:attribute type="xsd:string" name="uri" use="optional"/>
+                  <xsd:attribute type="xsd:int" name="sortOrder" use="optional"/>
+                  <xsd:attribute type="xsd:string" name="icon" use="optional"/>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="name" use="optional"/>
+            <xsd:attribute type="xsd:string" name="label" use="optional"/>
+            <xsd:attribute type="xsd:int" name="sortOrder" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="update" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType mixed="true">
+            <xsd:sequence>
+              <xsd:element name="attribute" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="key"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="id" use="optional"/>
+            <xsd:attribute type="xsd:string" name="name" use="optional"/>
+            <xsd:attribute type="xsd:string" name="label" use="optional"/>
+            <xsd:attribute type="xsd:string" name="uri" use="optional"/>
+            <xsd:attribute type="xsd:int" name="sortOrder" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

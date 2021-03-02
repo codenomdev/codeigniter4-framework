@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Admin\Menu;
 
 use CodeIgniter\Config\Services;
+use Codenom\Framework\Views\Menu\MenuRepository;
 
 class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
 {
@@ -23,9 +24,17 @@ class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
 
     protected function getAdminMenu()
     {
-        return array_merge($this->adminNavbar());
+        return array_merge($this->adminNavbar(), $this->getResult());
     }
 
+    protected function getResult()
+    {
+        // if (!$found = cache('menuStatic')) {
+        $found = (new MenuRepository())->test();
+        // cache()->save('menuStatic', $found, 36000);
+        // }
+        return $found;
+    }
     protected function adminNavbar()
     {
         $adminMenuStructure = [
