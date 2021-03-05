@@ -1,98 +1,101 @@
 <?php
 
+/**
+ * @see       https://github.com/codenomdev/codeigniter4-framework for the canonical source repository
+ *
+ * @copyright 2020 - Codenom Dev (https://codenom.com).
+ * @license   https://github.com/codenomdev/codeigniter4-framework/blob/master/LICENSE MIT License
+ */
+
 namespace Codenom\Framework\Views\Menu;
 
-use Codenom\Framework\Views\Menu\Loader\XmlFileLoader;
+use Codenom\Framework\Admin\Menu\AdminMenuFactory;
+use Codenom\Framework\Views\Menu\Element;
 
 class MenuRepository
 {
     /**
-     * @var Codenom\Framework\Views\Menu\MenuGenerate
+     * @var \Codenom\Framework\Views\Menu\MenuFactory
      */
-    protected $menuGenerate;
+    protected $menuFactory;
 
     /**
-     * @var Codenom\Framework\Views\Menu\XmlFileLoader
+     * @var \Codenom\Framework\Admin\Menu\AdminMenuFactory
      */
-    protected $menuLoader;
-    private $content = [];
+    protected $adminMenuFactory;
 
+    /**
+     * Constructor Class
+     */
     public function __construct()
     {
-        $this->menuGenerate = new MenuGenerate();
-        $this->menuLoader = new XmlFileLoader();
+        $this->menuFactory = new MenuFactory();
+        $this->adminMenuFactory = (new AdminMenuFactory())->adminMenu();
     }
 
-    public function test()
+    public function addMenuFactory()
     {
-        // foreach ($this->loader() as $key => $value) {
-        //     $content[] = $this->extractMenu($value);
-        // }
-
-        return \array_merge($this->menuAdd(), $this->menuChildren());
-    }
-
-    protected function extractMenu(array $data = [])
-    {
-        $menu = [];
-        if (!is_array($data)) {
-            return false;
-        }
-        foreach ($data as $key => $value) {
-            foreach ($value as $k => $v) {
-                // $menuAdd[] = $v;
-                $menu[] = [$this->menuChildren($v)];
+        $adminMenu = $this->adminMenuFactory;
+        foreach ($this->menuFactory->getMenuFromLoader() as $key => $value) {
+            switch ($value['_method']) {
+                case Element::METHOD_ADD:
+                    $adminMenu = $this->addMenu($value);
+                    break;
+                case Element::METHOD_CHILDREN:
+                    $adminMenu = $this->createChildren($value['content']);
+                    break;
+                case Element::METHOD_UPDATE:
+                    $adminMenu = $this->updateMenu($value);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf('Unknown method "%s" used in file "menu.xml". Expected "add", "children", "update, or "remove".', $value['_method']));
+                    break;
             }
         }
 
-        return $menu;
+        return $adminMenu;
     }
 
-    public function menuChildren()
+    protected function addMenu(array $data = [])
     {
-        $children = [];
-        foreach ($this->loader() as $key => $value) {
-            foreach ($value as $k => $v) {
-                if (\is_array($v) && (\array_key_exists('_parents', $v) === true)) {
-                    $children[$key] = $v['_parents'];
-                }
+        if ($data['_parent'] !== '') {
+            if (!\is_null($this->adminMenuFactory->getChild($data['_parent']))) {
+                $this->adminMenuFactory->getChild($data['_parent'])->addChild($data['name'], $data);
             }
         }
+        $this->adminMenuFactory->addChild($data['name'], $data);
 
-        return $children;
+        return $this->adminMenuFactory;
     }
-
-    public function menuAdd(array $data = [])
+    protected function updateMenu($data)
     {
-        $menu = [];
-        foreach ($this->loader() as $k => $value) {
-            foreach ($value as $k => $v) {
-                if (\is_array($v) && (\array_key_exists('_add', $v) === true)) {
-                    if ($v['_add']['_parent'] !== '') {
-                        $menu[] = $v['_add'];
-                    }
-                }
+        if ($data['_parent'] !== '' && $this->adminMenuFactory->getChild($data['_parent'])) {
+            if (isset($data['attributes'])) {
+                $this->adminMenuFactory->getChild($data['_parent'])->setAttributes($data['attributes']);
             }
+            $this->adminMenuFactory->getChild($data['_parent'])
+                ->setName($data['name'])
+                ->setLabel($data['label'])
+                ->setOrder($data['order'])
+                ->setIcon($data['icon'])
+                ->setUri($data['uri']);
         }
 
-        return $menu;
+        return $this->adminMenuFactory;
     }
 
-    private function loader()
+    protected function createChildren($data)
     {
-        $content = [];
-        foreach (glob(\APPPATH . 'Code\\*\\*\\', \GLOB_ONLYDIR) as $itemDir) {
-            $getFile = $itemDir . 'Admin\\Config\\menu.xml';
-            $isRealPath = str_replace('\\', '/', $getFile);
-            if ($this->menuGenerate->isFile($isRealPath)) {
-                $this->content[] = $this->getMenuLoader($isRealPath);
+        $this->adminMenuFactory->addChild($data['name'], [
+            'name' => $data['name'],
+            'label' => $data['label'],
+            'attributes' => $data['attributes']
+        ]);
+        foreach ($data['children'] as $key => $value) {
+            if (!\is_null($this->adminMenuFactory->getChild($data['name']))) {
+                $this->adminMenuFactory->getChild($data['name'])->addChild($value['name'], $value);
             }
         }
-        return $this->content;
-    }
-
-    private function getMenuLoader($path)
-    {
-        return $this->menuLoader->load($path);
+        return $this->adminMenuFactory;
     }
 }

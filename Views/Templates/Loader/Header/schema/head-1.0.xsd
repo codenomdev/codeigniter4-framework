@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns="http://codenom.com/schema/head"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://codenom.com/schema/head"
+    elementFormDefault="qualified">
+
+  <xsd:annotation>
+    <xsd:documentation><![CDATA[
+      Codenom XML Head Schema, version 1.0
+
+      This scheme defines the elements and attributes that can be used to define
+      Template on Head.
+    ]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="head">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="meta" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType mixed="true">
+            <xsd:sequence>
+              <xsd:element name="attribute" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="key"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="charset" use="optional"/>
+            <xsd:attribute type="xsd:string" name="property" use="optional"/>
+            <xsd:attribute type="xsd:string" name="content" use="optional"/>
+            <xsd:attribute type="xsd:string" name="name" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="link" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType>
+            <xsd:simpleContent>
+              <xsd:extension base="xsd:string">
+                <xsd:attribute type="xsd:string" name="rel" use="optional"/>
+                <xsd:attribute type="xsd:string" name="href" use="optional"/>
+                <xsd:attribute type="xsd:string" name="type" use="optional"/>
+                <xsd:attribute type="xsd:string" name="media" use="optional"/>
+                <xsd:attribute type="xsd:string" name="id" use="optional"/>
+                <xsd:attribute type="xsd:string" name="content" use="optional"/>
+                <xsd:attribute type="xsd:string" name="title" use="optional"/>
+              </xsd:extension>
+            </xsd:simpleContent>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="script" maxOccurs="unbounded" minOccurs="0">
+          <xsd:complexType mixed="true">
+            <xsd:sequence>
+              <xsd:element name="attribute" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="key" use="optional"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="type" use="optional"/>
+            <xsd:attribute type="xsd:string" name="id" use="optional"/>
+            <xsd:attribute type="xsd:string" name="crossorigin" use="optional"/>
+            <xsd:attribute type="xsd:string" name="src" use="optional"/>
+            <xsd:attribute type="xsd:string" name="defer" use="optional"/>
+            <xsd:attribute type="xsd:string" name="integrity" use="optional"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

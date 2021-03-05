@@ -10,21 +10,10 @@
 namespace Codenom\Framework\Views\Menu\Loader;
 
 use Codenom\Framework\Config\Util\XmlUtils;
+use Codenom\Framework\Views\Menu\Element;
 
 class XmlFileLoader
 {
-    /**
-     * Default Namespace Uri
-     * @var const NAMESPACE_URI
-     */
-    public const NAMESPACE_URI = 'http://codenom.com/schema/menu';
-
-    /**
-     * Default Scheme Path;
-     * @var const SCHEME_PATH
-     */
-    public const SCHEME_PATH = '/schema/menu/menu-1.0.xsd';
-
     /**
      * Load file XML
      * 
@@ -54,19 +43,19 @@ class XmlFileLoader
     protected function parseNode(\DOMElement $node, string $path)
     {
         $content = [];
-        if (self::NAMESPACE_URI !== $node->namespaceURI) {
+        if (Element::NAMESPACE_URI !== $node->namespaceURI) {
             return;
         }
 
         switch ($node->localName) {
-            case 'children':
-                $content['_parents'] = $this->parseChildren($node, $path);
+            case Element::SWITCH_CHILDREN:
+                $content = ['_method' => Element::METHOD_CHILDREN, '_parent' => null, 'content' => $this->parseChildren($node, $path)];
                 break;
-            case 'add':
-                $content['_add'] = $this->parseAdd($node, $path);
+            case Element::SWITCH_ADD:
+                $content = $this->parseAdd($node, $path);
                 break;
-            case 'update':
-                $content['_update'] = $this->parseUpdate($node, $path);
+            case Element::SWITCH_UPDATE:
+                $content = $this->parseUpdate($node, $path);
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "children", "add", "update" or "remove".', $node->localName, $path));
@@ -106,7 +95,7 @@ class XmlFileLoader
             $icon = null;
         }
         $content['icon'] = $icon;
-        foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
+        foreach ($node->getElementsByTagNameNS(Element::NAMESPACE_URI, '*') as $n) {
             if ($node !== $n->parentNode) {
                 continue;
             }
@@ -150,15 +139,16 @@ class XmlFileLoader
             $label = $name;
         }
 
-        //set uri of uri menu
+        //add method array
+        $content['_method'] = Element::METHOD_ADD;
         $content['_parent'] = (string) $parent ?? null;
         $content['name'] = $name;
         $content['label'] = $label;
+        //set uri of uri menu
         $content['uri'] = $node->getAttribute('uri') ?? '#';
         $content['order'] = (int) $node->getAttribute('sortOrder') ?? 0;
         $content['icon'] = (string) $node->getAttribute('icon') ?? null;
-        // $content['attribute'] = $this->parseAttribute($node, $path);
-        foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
+        foreach ($node->getElementsByTagNameNS(Element::NAMESPACE_URI, '*') as $n) {
             switch ($n->localName) {
                 case 'attribute':
                     $content['attributes'][$n->getAttribute('key')] = $this->parseAttribute($n, $path);
@@ -191,12 +181,15 @@ class XmlFileLoader
         if ('' === $label = $node->getAttribute('label')) {
             $label = $name;
         }
+        //set method
+        $content['_method'] = Element::METHOD_UPDATE;
         $content['_parent'] = $id;
         $content['name'] = $name;
         $content['label'] = $label;
         $content['icon'] = (string) $node->getAttribute('icon') ?? null;
         $content['uri'] = $node->getAttribute('uri') ?? null;
-        foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
+        $content['order'] = (int) $node->getAttribute('sortOrder') ?? 0;
+        foreach ($node->getElementsByTagNameNS(Element::NAMESPACE_URI, '*') as $n) {
             switch ($n->localName) {
                 case 'attribute':
                     $content['attributes'][$n->getAttribute('key')] = $this->parseAttribute($n, $path);
@@ -227,11 +220,9 @@ class XmlFileLoader
                 continue;
             }
 
-            if (self::NAMESPACE_URI !== $child->namespaceURI) {
+            if (Element::NAMESPACE_URI !== $child->namespaceURI) {
                 continue;
             }
-
-            // return $this->parseDefaultNode($child, $path);
         }
         return trim($element->textContent);
     }
@@ -266,6 +257,6 @@ class XmlFileLoader
      */
     protected function loadFile(string $file)
     {
-        return XmlUtils::loadFile($file, __DIR__ . static::SCHEME_PATH);
+        return XmlUtils::loadFile($file, __DIR__ . Element::SCHEME_PATH);
     }
 }

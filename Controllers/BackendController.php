@@ -25,6 +25,7 @@ namespace Codenom\Framework\Controllers;
 use CodeIgniter\Controller;
 use CodeIgniter\Events\Events;
 use Codenom\Framework\Admin\Breadcrumb\BreadcrumbFactory;
+use Codenom\Framework\Views\Menu\MenuRepository;
 
 class BackendController extends Controller
 {
@@ -174,7 +175,7 @@ class BackendController extends Controller
         $adminMenu = new \Codenom\Framework\Admin\Menu\AdminMenuFactory();
         $repository = new \Codenom\Framework\Admin\Menu\MenuRepository($menu, $adminMenu);
         Events::trigger('adminAreaPrimaryNavbar', $repository->primaryNavbar());
-        Events::trigger('adminAreaSidebar', $repository->adminMenu());
+        // Events::trigger('adminAreaSidebar', (new ));
         return $repository;
     }
 
@@ -233,7 +234,6 @@ class BackendController extends Controller
             ->setVar('subDisplayTitle', $this->subDisplayTitle(), 'html')
             ->setData([
                 'navbarMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->primaryNavbar()),
-                'adminMenu' => \Codenom\Framework\Libraries\Menu\Item::sort($this->menuLoaded()->adminMenu()),
                 'breadcrumb' => $this->addToBreadCrumb()->getBreadcrumb(),
             ]);
         return $setDefault;

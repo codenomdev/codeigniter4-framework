@@ -9,11 +9,15 @@
 
 namespace Codenom\Framework\Config;
 
-foreach (glob(APPPATH . 'Modules/*/Admin/Config', GLOB_ONLYDIR) as $events) {
-    if (file_exists($events . '/Events.php')) {
-        include_once($events . '/Events.php');
-    }
-}
+use Codenom\Framework\Views\Menu\MenuFactory;
+use Codenom\Framework\Libraries\Menu\Item as MenuItem;
+use CodeIgniter\Events\Events;
+
+// foreach (glob(APPPATH . 'Modules/*/Admin/Config', GLOB_ONLYDIR) as $events) {
+//     if (file_exists($events . '/Events.php')) {
+//         include_once($events . '/Events.php');
+//     }
+// }
 
 /*
  * --------------------------------------------------------------------
@@ -53,4 +57,12 @@ foreach (glob(APPPATH . 'Modules/*/Admin/Config', GLOB_ONLYDIR) as $events) {
 //             ));
 //         // return $ok;
 //     }
+// });
+// Events::on('adminAreaSidebar', function (MenuFactory $menuFactory) {
+    // $menuFactory->menuRepositoryAdd();
+    // $menuItem->addChild('Emergency Contacts', array(
+    //     'label' => 'emergencyContacts',
+    //     'uri' => 'emergency.php',
+    //     'order' => '100',
+    // ));
 // });

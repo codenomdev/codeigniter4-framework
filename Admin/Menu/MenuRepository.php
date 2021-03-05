@@ -45,7 +45,6 @@ class MenuRepository
         if (is_null($this->adminMenu)) {
             $this->adminMenu = $this->adminMenuFactory->adminMenu();
         }
-
         return $this->adminMenu;
     }
 }

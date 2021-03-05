@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns="http://codenom.com/schema/page"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://codenom.com/schema/page"
+    elementFormDefault="qualified">
+
+  <xsd:annotation>
+    <xsd:documentation><![CDATA[
+      Codenom XML Page Schema, version 1.0
+
+      This scheme defines the elements and attributes that can be used to define
+      Template on Page.
+    ]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:complexType name="linkType">
+        <xsd:attribute name="src" type="xsd:string" use="required"/>
+        <xsd:attribute name="defer" type="xsd:string"/>
+        <xsd:attribute name="ie_condition" type="xsd:string"/>
+        <xsd:attribute name="charset" type="xsd:string"/>
+        <xsd:attribute name="hreflang" type="xsd:string"/>
+        <xsd:attribute name="media" type="xsd:string"/>
+        <xsd:attribute name="rel" type="xsd:string"/>
+        <xsd:attribute name="rev" type="xsd:string"/>
+        <xsd:attribute name="sizes" type="xsd:string"/>
+        <xsd:attribute name="target" type="xsd:string"/>
+        <xsd:attribute name="type" type="xsd:string"/>
+        <xsd:attribute name="order" type="xsd:integer"/>
+        <xsd:attribute name="src_type" type="xsd:string"/>
+        <xsd:attribute name="as">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="font" />
+                    <xsd:enumeration value="script" />
+                    <xsd:enumeration value="style" />
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="metaType">
+        <xsd:attribute name="content" type="xsd:string" use="required"/>
+        <xsd:attribute name="charset" type="xsd:string" />
+        <xsd:attribute name="http-equiv" type="xsd:string"/>
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="scheme" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="scriptType">
+        <xsd:attribute name="src" type="xsd:string" use="required"/>
+        <xsd:attribute name="defer" type="xsd:string"/>
+        <xsd:attribute name="ie_condition" type="xsd:string"/>
+        <xsd:attribute name="async" type="xsd:string"/>
+        <xsd:attribute name="charset" type="xsd:string"/>
+        <xsd:attribute name="type" type="xsd:string"/>
+        <xsd:attribute name="src_type" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="headAttributeType">
+        <xsd:attribute type="xsd:string" name="name"/>
+        <xsd:attribute type="xsd:string" name="value"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="srcRemoveType">
+        <xsd:attribute name="src" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="headType">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="title" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="css" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="link" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="meta" type="metaType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="script" type="scriptType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="remove" type="srcRemoveType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="attribute" type="headAttributeType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="font" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="pageType">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="html" type="htmlType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="body" type="bodyType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="head" type="headType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="update" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute  type="xsd:string" name="layout" />
+        <xsd:attribute  type="xsd:string" name="label" />
+        <xsd:attribute  type="xsd:string" name="design_abstraction" />
+    </xsd:complexType>
+
+    <xsd:element name="page" type="pageType">
+        <xsd:unique name="blockKey">
+            <xsd:selector xpath=".//block"/>
+            <xsd:field xpath="@name"/>
+        </xsd:unique>
+        <xsd:unique name="containerKey">
+            <xsd:selector xpath=".//container"/>
+            <xsd:field xpath="@name"/>
+        </xsd:unique>
+    </xsd:element>
+
+    <xsd:complexType name="const">
+        <xsd:complexContent>
+            <xsd:extension base="argumentType" />
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>
