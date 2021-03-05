@@ -39,7 +39,7 @@ class XmlFileLoader
      */
     public function load(string $file, string $type = null)
     {
-        $path = APPPATH . 'Code\\' . $file;
+        $path = APPPATH . 'Code\\Codenom\\Dashboard\\Admin\\Config\\routes.xml';
         $xml = $this->loadFile($path);
         foreach ($xml->documentElement->childNodes as $node) {
             if (!$node instanceof \DOMElement) {
@@ -48,8 +48,6 @@ class XmlFileLoader
             $content[] = $this->parseNode($node, $path, $file);
         }
         return $content;
-        // return (new RouteCollection($content))->getController();
-        // return (new RouteCollection())->generateRoute($content);
     }
 
     /**
@@ -68,159 +66,179 @@ class XmlFileLoader
         }
 
         switch ($node->localName) {
-            case 'route':
-                return $this->parseRoute($node, $path);
+            case 'router':
+                return $this->parseRouter($node, $path);
                 break;
-                // case 'import':
-                //     $this->parseImport($node, $path, $file);
-                //     break;
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "route" or "import".', $node->localName, $path));
         }
         // return $this->parseRoute($node, $path);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, string $type = null)
-    {
-        return \is_string($resource) && 'xml' === pathinfo($resource, \PATHINFO_EXTENSION) && (!$type || 'xml' === $type);
-    }
-
-    /**
-     * Parses a route and adds it to the RouteCollection.
-     *
-     * @param \DOMElement $node Element to parse that represents a Route
-     * @param string      $path Full path of the XML file being processed
-     *
-     * @throws \InvalidArgumentException When the XML is invalid
-     */
-    protected function parseRoute(\DOMElement $node, string $path)
+    protected function parseRouter(\DOMElement $node, string $path)
     {
         $content = [];
+        if (self::NAMESPACE_URI !== $node->namespaceURI) {
+            return;
+        }
+        switch ($node->getAttribute('id')) {
+            case 'backend':
+                $content = ['_id' => 'backend', '_content' => $this->parseRouteBackend($node, $path)];
+                break;
+            case 'frontend':
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('Unknown attribute ID "%s" used in file "%s". Expected "backend" or "frontend".', $node->localName, $path));
+        }
+        return $content;
+    }
+
+    protected function parseRouteBackend(\DOMElement $node, string $path)
+    {
+        $content = [];
+        foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
+            if ($node !== $n->parentNode) {
+                continue;
+            }
+            switch ($n->localName) {
+                case 'add':
+                    $content[] = ['type' => '_add', '_remap' => [$this->parseAdd($n, $path)]];
+                    break;
+                case 'get':
+                    $content[] = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
+                    break;
+                case 'post':
+                    $content[] = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
+                    break;
+                case 'group':
+                    $content[] = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf('Unknown attribute "%s" used in file "%s". Expected "add", "post", or "group".', $node->localName, $path));
+            }
+        }
+        return $content;
+    }
+
+    private function parseGroup(\DOMElement $node, string $path)
+    {
+        $content = [];
+        foreach ($node->getElementsByTagNameNS(SELF::NAMESPACE_URI, '*') as $n) {
+            // switch ($n->localName) {
+            //     case 'add':
+            //         $content = $this->parseAdd($n, $path);
+            //         break;
+            //     case 'get':
+            //         $content = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
+            //         break;
+            //     case 'post':
+            //         $content = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
+            //         break;
+            //     case 'group':
+            //         // $content = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
+            //         break;
+            //     default:
+            //         break;
+            // }
+            $content[] = $n->localName;
+        }
+        return $content;
+    }
+
+    private function parseGet(\DOMElement $node, string $path)
+    {
+        $content = [];
+        [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
+        $content['_id'] = $id;
+        $content['_controller'] = $controller;
+        $content['_module'] = $module;
+        $content['_options'] = [$options];
+        return $content;
+    }
+
+    private function parsePost(\DOMElement $node, string $path)
+    {
+        $content = [];
+        [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
+        $content['_id'] = $id;
+        $content['_controller'] = $controller;
+        $content['_module'] = $module;
+        $content['_options'] = [$options];
+        return $content;
+    }
+
+    private function parseAdd(\DOMElement $node, string $path)
+    {
+        $content = [];
+        [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
+        $content['_id'] = $id;
+        $content['_controller'] = $controller;
+        $content['_module'] = $module;
+        $content['_options'] = [$options];
+        return $content;
+    }
+
+    private function parseConfig(\DOMElement $node, string $path)
+    {
+        $id = [];
+        $controller = [];
+        $module = [];
+        $options = [];
 
         if ('' === $id = $node->getAttribute('id')) {
-            throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must have an "id" attribute.', $path));
+            throw new \InvalidArgumentException(sprintf('The <add> element in file "%s" must have a "id" attribute or <id> child nodes.', $path));
         }
 
-        $schemes = preg_split('/[\s,\|]++/', $node->getAttribute('schemes'), -1, \PREG_SPLIT_NO_EMPTY);
-        $methods = preg_split('/[\s,\|]++/', $node->getAttribute('methods'), -1, \PREG_SPLIT_NO_EMPTY);
-
-        [$defaults, $requirements, $options, $condition, $paths, /* $prefixes */, $hosts] = $this->parseConfigs($node, $path);
-
-        if (!$paths && '' === $node->getAttribute('path')) {
-            throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must have a "path" attribute or <path> child nodes.', $path));
+        if ('' === $controller = $node->getAttribute('controller')) {
+            throw new \InvalidArgumentException(sprintf('The <add> element in file "%s" must have a "controller" attribute or <controller> child nodes.', $path));
         }
 
-        if ($paths && '' !== $node->getAttribute('path')) {
-            throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must not have both a "path" attribute and <path> child nodes.', $path));
+        if ('' === $module = $node->getAttribute('module')) {
+            throw new \InvalidArgumentException(sprintf('The <add> element in file "%s" must have a "module" attribute or <module> child nodes.', $path));
         }
-        $content['_route']['_routeId'] = $id;
-        $content['_route'] = $defaults;
-        $content['_route']['_methods'] = $methods;
-        $content['_route']['_hosts'] = $hosts;
-        $content['_route']['_requirement'] = $requirements;
-        $content['_route']['_options'] = $options;
-        $content['_route']['_condition'] = $condition;
-        $content['_route']['_paths'] = $paths ?: $node->getAttribute('path');
-        // $content['_route']['_host'] = $hosts;
-        // $content['_route']['_template'] = $defaults['template'];
-        // $content['_route']['_maxAge'] = $defaults['maxAge'];
-        // $content['_route']['_sharedAge'] = $defaults['sharedAge'];
-        // $content['_route']['_private'] = $defaults['private'];
-        // $routes = $this->createLocalizedRoute($collection, $id, $paths ?: $node->getAttribute('path'));
-        // $routes->addDefaults($defaults);
-        // $routes->addRequirements($requirements);
-        // $routes->addOptions($options);
-        // $routes->setSchemes($schemes);
-        // $routes->setMethods($methods);
-        // $routes->setCondition($condition);
-        // if (null !== $hosts) {
-        //     $this->addHost($routes, $hosts);
-        // }
-        return $content;
-        // return $this->parseConfigs($node, $path);
+
+        foreach ($node->getElementsByTagNameNS(SELF::NAMESPACE_URI, '*') as $n) {
+            switch ($n->localName) {
+                case 'option':
+                    $options[$n->getAttribute('key')] = $this->parseOption($n, $path);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf('The <name> element in file "%s" must have an "name" attribute.', $path));
+                    break;
+            }
+        }
+
+        $id = $id;
+        $controller = $controller;
+        $module = $module;
+
+        return [$id, $controller, $module, $options];
     }
 
     /**
-     * Parses an import and adds the routes in the resource to the RouteCollection.
-     *
-     * @param \DOMElement $node Element to parse that represents a Route
-     * @param string      $path Full path of the XML file being processed
-     * @param string      $file Loaded file name
-     *
-     * @throws \InvalidArgumentException When the XML is invalid
+     * Parse Attribute
+     * Function for attribute menu
+     * 
+     * @param \DOMElement $element
+     * @param string $path
+     * @return array
      */
-    protected function parseImport(\DOMElement $node, string $path, string $file)
+    private function parseOption(\DOMElement $element, string $path)
     {
-        if ('' === $resource = $node->getAttribute('resource')) {
-            throw new \InvalidArgumentException(sprintf('The <import> element in file "%s" must have a "resource" attribute.', $path));
+        if ($this->isElementValueNull($element)) {
+            return null;
         }
+        foreach ($element->childNodes as $child) {
+            if (!$child instanceof \DOMElement) {
+                continue;
+            }
 
-        $type = $node->getAttribute('type');
-        $prefix = $node->getAttribute('prefix');
-        $schemes = $node->hasAttribute('schemes') ? preg_split('/[\s,\|]++/', $node->getAttribute('schemes'), -1, \PREG_SPLIT_NO_EMPTY) : null;
-        $methods = $node->hasAttribute('methods') ? preg_split('/[\s,\|]++/', $node->getAttribute('methods'), -1, \PREG_SPLIT_NO_EMPTY) : null;
-        $trailingSlashOnRoot = $node->hasAttribute('trailing-slash-on-root') ? XmlUtils::phpize($node->getAttribute('trailing-slash-on-root')) : true;
-        $namePrefix = $node->getAttribute('name-prefix') ?: null;
-
-        [$defaults, $requirements, $options, $condition, /* $paths */, $prefixes, $hosts] = $this->parseConfigs($node, $path);
-
-        if ('' !== $prefix && $prefixes) {
-            throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must not have both a "prefix" attribute and <prefix> child nodes.', $path));
-        }
-
-        $exclude = [];
-        foreach ($node->childNodes as $child) {
-            if ($child instanceof \DOMElement && $child->localName === $exclude && self::NAMESPACE_URI === $child->namespaceURI) {
-                $exclude[] = $child->nodeValue;
+            if (SELF::NAMESPACE_URI !== $child->namespaceURI) {
+                continue;
             }
         }
-
-        if ($node->hasAttribute('exclude')) {
-            if ($exclude) {
-                throw new \InvalidArgumentException('You cannot use both the attribute "exclude" and <exclude> tags at the same time.');
-            }
-            $exclude = [$node->getAttribute('exclude')];
-        }
-
-        // $this->setCurrentDir(\dirname($path));
-
-        /** @var RouteCollection[] $imported */
-        // $imported = $this->import($resource, ('' !== $type ? $type : null), false, $file, $exclude) ?: [];
-
-        if (!\is_array($imported)) {
-            $imported = [$imported];
-        }
-
-        // foreach ($imported as $subCollection) {
-        //     $this->addPrefix($subCollection, $prefixes ?: $prefix, $trailingSlashOnRoot);
-
-        //     if (null !== $hosts) {
-        //         $this->addHost($subCollection, $hosts);
-        //     }
-
-        //     if (null !== $condition) {
-        //         $subCollection->setCondition($condition);
-        //     }
-        //     if (null !== $schemes) {
-        //         $subCollection->setSchemes($schemes);
-        //     }
-        //     if (null !== $methods) {
-        //         $subCollection->setMethods($methods);
-        //     }
-        //     if (null !== $namePrefix) {
-        //         $subCollection->addNamePrefix($namePrefix);
-        //     }
-        //     $subCollection->addDefaults($defaults);
-        //     $subCollection->addRequirements($requirements);
-        //     $subCollection->addOptions($options);
-
-        //     $collection->addCollection($subCollection);
-        // }
+        return trim($element->textContent);
     }
-
     /**
      * Loads an XML file.
      *
@@ -235,185 +253,6 @@ class XmlFileLoader
     protected function loadFile(string $file)
     {
         return XmlUtils::loadFile($file, __DIR__ . static::SCHEME_PATH);
-    }
-
-    /**
-     * Parses the config elements (default, requirement, option).
-     *
-     * @throws \InvalidArgumentException When the XML is invalid
-     */
-    private function parseConfigs(\DOMElement $node, string $path): array
-    {
-        $defaults = [];
-        $requirements = [];
-        $options = [];
-        $condition = null;
-        $prefixes = [];
-        $paths = [];
-        $hosts = [];
-
-        /** @var \DOMElement $n */
-        foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
-            if ($node !== $n->parentNode) {
-                continue;
-            }
-
-            switch ($n->localName) {
-                case 'path':
-                    $paths[$n->getAttribute('locale')] = trim($n->textContent);
-                    break;
-                case 'host':
-                    $hosts[$n->getAttribute('locale')] = trim($n->textContent);
-                    break;
-                case 'prefix':
-                    $prefixes[$n->getAttribute('locale')] = trim($n->textContent);
-                    break;
-                case 'default':
-                    if ($this->isElementValueNull($n)) {
-                        $defaults[$n->getAttribute('key')] = null;
-                    } else {
-                        $defaults[$n->getAttribute('key')] = $this->parseDefaultsConfig($n, $path);
-                    }
-
-                    break;
-                case 'requirement':
-                    $requirements[$n->getAttribute('key')] = trim($n->textContent);
-                    break;
-                case 'option':
-                    $options[$n->getAttribute('key')] = XmlUtils::phpize(trim($n->textContent));
-                    break;
-                case 'condition':
-                    $condition = trim($n->textContent);
-                    break;
-                default:
-                    throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "default", "requirement", "option" or "condition".', $n->localName, $path));
-            }
-        }
-
-        if ($controller = $node->getAttribute('controller')) {
-            if (isset($defaults['_controller'])) {
-                $name = $node->hasAttribute('id') ? sprintf('"%s".', $node->getAttribute('id')) : sprintf('the "%s" tag.', $node->tagName);
-
-                throw new \InvalidArgumentException(sprintf('The routing file "%s" must not specify both the "controller" attribute and the defaults key "_controller" for ', $path) . $name);
-            }
-
-            $defaults['_controller'] = $controller;
-        }
-        if ($node->hasAttribute('locale')) {
-            $defaults['_locale'] = $node->getAttribute('locale');
-        }
-        if ($node->hasAttribute('format')) {
-            $defaults['_format'] = $node->getAttribute('format');
-        }
-        if ($node->hasAttribute('utf8')) {
-            $options['utf8'] = XmlUtils::phpize($node->getAttribute('utf8'));
-        }
-        if ($stateless = $node->getAttribute('stateless')) {
-            if (isset($defaults['_stateless'])) {
-                $name = $node->hasAttribute('id') ? sprintf('"%s".', $node->getAttribute('id')) : sprintf('the "%s" tag.', $node->tagName);
-
-                throw new \InvalidArgumentException(sprintf('The routing file "%s" must not specify both the "stateless" attribute and the defaults key "_stateless" for ', $path) . $name);
-            }
-
-            $defaults['_stateless'] = XmlUtils::phpize($stateless);
-        }
-
-        if (!$hosts) {
-            $hosts = $node->hasAttribute('host') ? $node->getAttribute('host') : null;
-        }
-
-        return [$defaults, $requirements, $options, $condition, $paths, $prefixes, $hosts];
-    }
-
-    /**
-     * Parses the "default" elements.
-     *
-     * @return array|bool|float|int|string|null The parsed value of the "default" element
-     */
-    private function parseDefaultsConfig(\DOMElement $element, string $path)
-    {
-        if ($this->isElementValueNull($element)) {
-            return null;
-        }
-
-        // Check for existing element nodes in the default element. There can
-        // only be a single element inside a default element. So this element
-        // (if one was found) can safely be returned.
-        foreach ($element->childNodes as $child) {
-            if (!$child instanceof \DOMElement) {
-                continue;
-            }
-
-            if (self::NAMESPACE_URI !== $child->namespaceURI) {
-                continue;
-            }
-
-            return $this->parseDefaultNode($child, $path);
-        }
-
-        // If the default element doesn't contain a nested "bool", "int", "float",
-        // "string", "list", or "map" element, the element contents will be treated
-        // as the string value of the associated default option.
-        return trim($element->textContent);
-    }
-
-    /**
-     * Recursively parses the value of a "default" element.
-     *
-     * @return array|bool|float|int|string The parsed value
-     *
-     * @throws \InvalidArgumentException when the XML is invalid
-     */
-    private function parseDefaultNode(\DOMElement $node, string $path)
-    {
-        if ($this->isElementValueNull($node)) {
-            return null;
-        }
-
-        switch ($node->localName) {
-            case 'bool':
-                return 'true' === trim($node->nodeValue) || '1' === trim($node->nodeValue);
-            case 'int':
-                return (int) trim($node->nodeValue);
-            case 'float':
-                return (float) trim($node->nodeValue);
-            case 'string':
-                return trim($node->nodeValue);
-            case 'list':
-                $list = [];
-
-                foreach ($node->childNodes as $element) {
-                    if (!$element instanceof \DOMElement) {
-                        continue;
-                    }
-
-                    if (self::NAMESPACE_URI !== $element->namespaceURI) {
-                        continue;
-                    }
-
-                    $list[] = $this->parseDefaultNode($element, $path);
-                }
-
-                return $list;
-            case 'map':
-                $map = [];
-
-                foreach ($node->childNodes as $element) {
-                    if (!$element instanceof \DOMElement) {
-                        continue;
-                    }
-
-                    if (self::NAMESPACE_URI !== $element->namespaceURI) {
-                        continue;
-                    }
-
-                    $map[$element->getAttribute('key')] = $this->parseDefaultNode($element, $path);
-                }
-
-                return $map;
-            default:
-                throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "bool", "int", "float", "string", "list", or "map".', $node->localName, $path));
-        }
     }
 
     private function isElementValueNull(\DOMElement $element): bool
