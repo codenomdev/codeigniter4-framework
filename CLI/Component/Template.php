@@ -49,6 +49,11 @@ class Template
     const COMPILE_TITLE = 'Please wait, Compiled system is a running:';
 
     /**
+     * Title Publish Autoload Config
+     */
+    const PUBLISH_AUTOLOAD_TITLE = 'Please wait, publish Autoload is a running:';
+
+    /**
      * Check permission title
      */
     const PERMISSION_TITLE = 'Check folder permission:';
@@ -214,6 +219,17 @@ class Template
     public function waitingCompile(int $second = SELF::WAITING_SECOND)
     {
         return CLI::wait($second);
+    }
+
+    /**
+     * Publish Autoload Config title
+     * 
+     * @var Template::PUBLISH_AUTOLOAD_TITLE
+     * @var CLI::write
+     */
+    public function publishAutoloadConfigTitle()
+    {
+        return CLI::write(SELF::PUBLISH_AUTOLOAD_TITLE);
     }
 
     /**

@@ -24,7 +24,7 @@ class SetupCompile extends BaseCommand
      */
     public function run($params)
     {
-        new Command();
+        (new Command())->runCompiler();
         CLI::write('Compiled system finish.', 'green');
     }
 }

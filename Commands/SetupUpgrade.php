@@ -11,6 +11,7 @@ namespace Codenom\Framework\Commands;
 
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\BaseCommand;
+use Codenom\Framework\CLI\Component\Command;
 
 class SetupUpgrade extends BaseCommand
 {
@@ -23,5 +24,6 @@ class SetupUpgrade extends BaseCommand
      */
     public function run($params)
     {
+        (new Command())->runPublishAutoloadConfig();
     }
 }

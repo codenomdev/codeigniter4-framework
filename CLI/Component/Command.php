@@ -25,6 +25,10 @@ class Command
     {
         $this->generate = new Generate();
         $this->template = new Template();
+    }
+
+    public function runCompiler()
+    {
         $this->template->compileTitle();
         $this->template->waitingCompile();
         $this->checkPermissionWritableDirectory();
@@ -32,6 +36,11 @@ class Command
         $this->removeAutoloadFile();
         $this->template->waitingCompile();
         $this->generateAutoload();
+    }
+
+    public function runPublishAutoloadConfig()
+    {
+        $this->template->publishAutoloadConfigTitle();
         $this->template->waitingCompile();
         $this->schemaAutoloadPsr4Dom();
     }
