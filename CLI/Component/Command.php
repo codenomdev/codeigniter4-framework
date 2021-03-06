@@ -28,9 +28,12 @@ class Command
         $this->template->compileTitle();
         $this->template->waitingCompile();
         $this->checkPermissionWritableDirectory();
+        $this->template->waitingCompile();
         $this->removeAutoloadFile();
+        $this->template->waitingCompile();
         $this->generateAutoload();
         $this->template->waitingCompile();
+        $this->schemaAutoloadPsr4Dom();
     }
 
     private function checkPermissionWritableDirectory()
@@ -65,6 +68,19 @@ class Command
         } else {
             $this->template->waitingCompile();
             return $this->template->unsuccessfullyGenerateAutoload();
+        }
+    }
+
+    private function schemaAutoloadPsr4Dom()
+    {
+        $generate = $this->generate->preparePublishGenerateAutoload();
+        $getAutoloadConfig = $this->generate->getAutoloadConfig();
+        $publishGenerate = $this->template->publishAutoload($generate, $getAutoloadConfig);
+        $publishGenerate = $this->generate->moveAutoloadConfig($publishGenerate);
+        if ($publishGenerate) {
+            return $this->template->publishAutoloadSuccessfully();
+        } else {
+            return $this->template->publishAutoloadUnsuccessfully();
         }
     }
 }

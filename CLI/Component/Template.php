@@ -21,12 +21,22 @@ class Template
     /**
      * Replace namespace
      */
-    const REPLACE_NAMESPACE = 'Config';
+    const REPLACE_NAMESPACE = 'Config;';
 
     /**
      * Locate file Autoload
      */
     const LOCATE_AUTOLOAD = __DIR__ . '/../../Config/Autoload.php';
+
+    /**
+     * Publish Autoload successfully
+     */
+    const PUBLISH_AUTOLOAD_SUCCESS = 'Publish Autoload is successfully';
+
+    /**
+     * Publish Autoload unsuccessfully
+     */
+    const PUBLISH_AUTOLOAD_UNSUCCESS = 'Publish Autoload is unsuccessfully';
 
     /**
      * Waiting compile
@@ -74,6 +84,11 @@ class Template
     const GENERATE_AUTOLOAD_UNSUCCESS = 'Generate Autoload is successfully.';
 
     /**
+     * Update module title progress
+     */
+    const PROGRESS_UPDATE_MODULE = 'Updating module:';
+
+    /**
      * Open Autoload in file php
      * 
      * @return string
@@ -96,6 +111,9 @@ class Template
     {
         $schemaString = '';
         $schemaString = $this->openAutoloadGenerate();
+        $this->newLine();
+        CLI::write(SELF::PROGRESS_UPDATE_MODULE, 'dark_gray');
+        $this->newLine();
         foreach ($data as $key => $value) {
             $schemaString .= "    '{$key}' => " . Generate::ACTIVE_MODULE . ',' . \PHP_EOL;
             $this->waitingCompile();
@@ -117,6 +135,74 @@ class Template
         $content = '];' . \PHP_EOL;
 
         return $content;
+    }
+
+    /**
+     * DOM publish Autoload Config
+     * 
+     * @param string $autoloadConfig
+     * @return string
+     */
+    public function domPublishAutoload(string $autoloadConfig = '')
+    {
+        $schema = $this->domSchemaAutoloadPsr4($autoloadConfig);
+
+        return (string) $schema;
+    }
+
+    /**
+     * Publish Autoload Config
+     * 
+     * @param string $autoloadConfig
+     * @param $content
+     * 
+     * @return string
+     */
+    public function publishAutoload(string $autoloadConfig = '', $content)
+    {
+        $content = str_replace('namespace Codenom\Framework\Config', 'namespace ' . SELF::REPLACE_NAMESPACE, $content);
+        $content = str_replace('public $psr4 = [];', $this->domPublishAutoload($autoloadConfig), $content);
+
+        return $content;
+    }
+
+    /**
+     * DOM schema Autoload PSR-4
+     * 
+     * @param string $psr4Dom
+     * @return string
+     */
+    private function domSchemaAutoloadPsr4(string $psr4Dom = '')
+    {
+        $schema = 'public $psr4 = [' . \PHP_EOL;
+        $schema .= "		APP_NAMESPACE => APPPATH," . \PHP_EOL;
+        $schema .= "		'Config' => APPPATH . 'Config'," . \PHP_EOL;
+        $schema .= $psr4Dom;
+        $schema .= "	];" . \PHP_EOL;
+
+        return $schema;
+    }
+
+    /**
+     * Publish Autoload Config is successfully
+     * 
+     * @var Template::PUBLISH_AUTOLOAD_SUCCESS
+     * @var CLI::write
+     */
+    public function publishAutoloadSuccessfully()
+    {
+        return CLI::write(SELF::PUBLISH_AUTOLOAD_SUCCESS, 'green');
+    }
+
+    /**
+     * Publish Autoload Config is unsuccessfully
+     * 
+     * @var Template::PUBLISH_AUTOLOAD_UNSUCCESS
+     * @var CLI::write
+     */
+    public function publishAutoloadUnsuccessfully()
+    {
+        return CLI::error(SELF::PUBLISH_AUTOLOAD_UNSUCCESS);
     }
 
     /**

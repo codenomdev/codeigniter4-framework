@@ -17,7 +17,7 @@ class SetupCompile extends BaseCommand
 {
     protected $group = 'Codenom';
     protected $name = 'setup:compile';
-    protected $description = 'Setup upgrade system add/delete your module on the system.';
+    protected $description = 'Setup Compile system after modify, add, delete module on the system.';
 
     /**
      * Run Command\'s
@@ -25,19 +25,6 @@ class SetupCompile extends BaseCommand
     public function run($params)
     {
         new Command();
-        CLI::write('Compiled system is successfully.', 'green');
-        // $this->template-=
-        // CLI::write('Check folder permission', 'dark_gray');
-        // if (!\is_null($this->generate->checkPermissionWritableDirectory())) {
-        //     $this->generate->removeGenerateAutoload();
-        //     $createSchema = $this->template->contentAutoloadGenerate($this->generate->getNameModule());
-        //     if ($this->generate->fileCreate($createSchema)) {
-        //         CLI::newLine();
-        //     } else {
-        //         CLI::error('Ops, compiled not successfully, please contact http://codenom.com/contact');
-        //     }
-        // } else {
-        //     CLI::error('Ops, Can\'t create directory');
-        // }
+        CLI::write('Compiled system finish.', 'green');
     }
 }

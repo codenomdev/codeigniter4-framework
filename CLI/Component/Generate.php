@@ -29,11 +29,28 @@ class Generate
     const ACTIVE_MODULE = '1';
 
     /**
+     * Get Autoload Config
+     */
+    const AUTOLOAD_CONFIG_FILE = __DIR__ . '/../../Config/Autoload.php';
+
+    /**
+     * Publish directory Autoload Config
+     */
+    const PUBLISH_AUTOLOAD_CONFIG = \APPPATH . 'Config\\Autoload.php';
+
+    /**
      * Default CHMOD
      * 
      * For security, don't modify CHMOD
      */
     const CHMOD = '0777';
+
+    /**
+     * Default path locate module
+     * 
+     * @var string
+     */
+    const DEFAULT_CODE = 'Code';
 
     /**
      * @var Codenom\Framework\Code\Generator\Io
@@ -185,7 +202,7 @@ class Generate
     }
 
     /**
-     * Conver namespace
+     * Convert namespace
      *        Example: Module_Dashboard
      *        To: Module\Dashboard
      * 
@@ -213,5 +230,54 @@ class Generate
         }
         $component = (new ComponentRegistrar)->getPaths(ComponentRegistrar::MODULE);
         return $component;
+    }
+
+    /**
+     * Prepare publish generate Autoload.php
+     * 
+     * @var public function nameBuilder
+     * @var SELF::DEFAULT_CODE path
+     * @return string
+     */
+    public function preparePublishGenerateAutoload()
+    {
+        $content = '';
+        if (is_array($this->includeGenerateAutoloadOnWritable())) {
+            foreach ($this->includeGenerateAutoloadOnWritable() as $key => $value) {
+                if (array_key_exists($key, $this->includeGenerateAutoloadOnWritable())) {
+                    if ($value === 1) {
+                        $content .= "		'" . $this->nameBuilders($key) . "' => \APPPATH . '" . SELF::DEFAULT_CODE . \DIRECTORY_SEPARATOR . $this->nameBuilders($key) . "'," . \PHP_EOL;
+                    }
+                }
+            }
+        }
+        return (string) $content;
+    }
+
+    /**
+     * Get Autoload Config
+     */
+    public function getAutoloadConfig()
+    {
+        return $this->drive->fileGetContents(SELF::AUTOLOAD_CONFIG_FILE);
+    }
+
+    /**
+     * File put content Autoload Config
+     */
+    public function moveAutoloadConfig($content)
+    {
+        return $this->drive->filePutContents(SELF::PUBLISH_AUTOLOAD_CONFIG, $content);
+    }
+
+    /**
+     * Include generated autoload on path writable
+     * 
+     * @var Generator
+     * @return mixed
+     */
+    private function includeGenerateAutoloadOnWritable()
+    {
+        return $this->generator->includeFile(SELF::DEFAULT_PATH . \DIRECTORY_SEPARATOR . DirectoryList::FILE_AUTOLOAD);
     }
 }
