@@ -9,12 +9,16 @@
 
 namespace Codenom\Framework\Components;
 
-// use CodeIgniter\Autoloader\FileLocator;
 use Exception;
 
+/**
+ * Provides ability to statically register components.
+ *
+ * @api
+ */
 class ComponentRegistrar implements ComponentRegistrarInterface
 {
-    const MODULE = 'Modules';
+    const MODULE = 'Code';
     const LANGUAGE = 'Language';
 
     private static $paths = [
@@ -22,6 +26,15 @@ class ComponentRegistrar implements ComponentRegistrarInterface
         SELF::LANGUAGE => [],
     ];
 
+    /**
+     * Sets the location of a component.
+     *
+     * @param string $type component type
+     * @param string $componentName Fully-qualified component name
+     * @param string $path Absolute file path to the component
+     * @throws \LogicException
+     * @return void
+     */
     public static function register($type, $componentName, $path)
     {
         self::validateType($type);
