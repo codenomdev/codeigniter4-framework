@@ -12,6 +12,8 @@ namespace Codenom\Framework\Config;
 use CodeIgniter\Config\BaseService;
 use Codenom\Framework\Config\ValidationConfig;
 use CodeIgniter\Validation\Validation;
+use Codenom\Framework\Views\Result\Render;
+use Config\View as ViewConfig;
 
 class Services extends BaseService
 {
@@ -32,5 +34,28 @@ class Services extends BaseService
         $config = $config ?? config('ValidationConfig');
 
         return new Validation($config, \Config\Services::renderer());
+    }
+
+    /**
+     * The Renderer class is the class that actually displays a file to the user.
+     * The default View class within CodeIgniter is intentionally simple, but this
+     * service could easily be replaced by a template engine if the user needed to.
+     *
+     * @param string|null     $viewPath
+     * @param ViewConfig|null $config
+     * @param boolean         $getShared
+     *
+     * @return View
+     */
+    public static function render(string $viewPath = null, ViewConfig $config = null, bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('render', $viewPath, $config);
+        }
+
+        $viewPath = $viewPath ?: config('Paths')->viewDirectory;
+        $config   = $config ?? config('View');
+
+        return new Render($config, $viewPath, static::locator(), CI_DEBUG, static::logger());
     }
 }
