@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Data\Country;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Config\TableRepository;
 
 class CountryManager
 {
@@ -21,7 +22,7 @@ class CountryManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('country');
+        $this->objectManager = new ObjectManager(TableRepository::TABLE_COUNTRY);
     }
 
     /**

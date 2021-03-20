@@ -39,6 +39,7 @@ class XmlFileLoader
      */
     public function load(string $file, string $type = null)
     {
+        $content = [];
         $path = APPPATH . 'Code\\Codenom\\Dashboard\\Admin\\Config\\routes.xml';
         $xml = $this->loadFile($path);
         foreach ($xml->documentElement->childNodes as $node) {
@@ -67,23 +68,27 @@ class XmlFileLoader
 
         switch ($node->localName) {
             case 'router':
-                return $this->parseRouter($node, $path);
+                return $this->parseRoute($node, $path);
                 break;
             default:
-                throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "route" or "import".', $node->localName, $path));
+                throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "router" or "import".', $node->localName, $path));
         }
         // return $this->parseRoute($node, $path);
     }
 
-    protected function parseRouter(\DOMElement $node, string $path)
+    protected function parseRoute(\DOMElement $node, string $path)
     {
-        $content = [];
         if (self::NAMESPACE_URI !== $node->namespaceURI) {
             return;
         }
+        $content = [];
         switch ($node->getAttribute('id')) {
             case 'backend':
-                $content = ['_id' => 'backend', '_content' => $this->parseRouteBackend($node, $path)];
+                $content = [
+                    'routeIdentity' => $node->getAttribute('id'),
+                    'literal' => $this->parseRouteBackend($node, $path)
+                ];
+                // $content[$node->getAttribute('id')] = $this->parseRouteBackend($node, $path);
                 break;
             case 'frontend':
                 break;
@@ -92,6 +97,25 @@ class XmlFileLoader
         }
         return $content;
     }
+
+
+    // protected function parseRouter(\DOMElement $node, string $path)
+    // {
+    //     $content = [];
+    //     if (self::NAMESPACE_URI !== $node->namespaceURI) {
+    //         return;
+    //     }
+    //     switch ($node->getAttribute('id')) {
+    //         case 'backend':
+    //             $content[$node->getAttribute('id')] = ['_id' => 'backend', '_content' => $this->parseRouteBackend($node, $path)];
+    //             break;
+    //         case 'frontend':
+    //             break;
+    //         default:
+    //             throw new \InvalidArgumentException(sprintf('Unknown attribute ID "%s" used in file "%s". Expected "backend" or "frontend".', $node->localName, $path));
+    //     }
+    //     return $content;
+    // }
 
     protected function parseRouteBackend(\DOMElement $node, string $path)
     {
@@ -102,44 +126,89 @@ class XmlFileLoader
             }
             switch ($n->localName) {
                 case 'add':
-                    $content[] = ['type' => '_add', '_remap' => [$this->parseAdd($n, $path)]];
+                    $parseAdd = $this->parseAdd($n, $path);
+                    $content[$parseAdd['_module']]['add'][$parseAdd['_controller']] = $parseAdd;
                     break;
                 case 'get':
-                    $content[] = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
+                    $parseGet = $this->parseGet($n, $path);
+                    $content[$parseGet['_module']]['get'] = $parseGet;
                     break;
                 case 'post':
-                    $content[] = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
+                    $parsePost = $this->parsePost($n, $path);
+                    $content[$parsePost['_module']]['post'] = $parsePost;
                     break;
                 case 'group':
-                    $content[] = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
+                    $parseGroup = $this->parseGroup($n, $path);
+                    $content['group'] = [$parseGroup];
                     break;
-                default:
-                    throw new \InvalidArgumentException(sprintf('Unknown attribute "%s" used in file "%s". Expected "add", "post", or "group".', $node->localName, $path));
+                    // default:
+                    //     throw new \InvalidArgumentException(sprintf('Unknown attribute "%s" used in file "%s". Expected "add", "post", or "group".', $node->localName, $path));
             }
         }
         return $content;
     }
 
+    private function parseAdd(\DOMElement $node, string $path)
+    {
+        $content = [];
+        [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
+        // $content = [
+        //     ''
+        // ];
+        $content['_id'] = $id;
+        $content['_controller'] = $controller;
+        $content['_module'] = $module;
+        $content['_options'] = $options;
+        return $content;
+    }
+
+    // protected function parseRouteBackend(\DOMElement $node, string $path)
+    // {
+    //     $content = [];
+    //     foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
+    //         if ($node !== $n->parentNode) {
+    //             continue;
+    //         }
+    //         switch ($n->localName) {
+    //             case 'add':
+    //                 $content[] = ['type' => '_add', '_remap' => [$this->parseAdd($n, $path)]];
+    //                 break;
+    //             case 'get':
+    //                 $content[] = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
+    //                 break;
+    //             case 'post':
+    //                 $content[] = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
+    //                 break;
+    //             case 'group':
+    //                 $content[] = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
+    //                 break;
+    //             default:
+    //                 throw new \InvalidArgumentException(sprintf('Unknown attribute "%s" used in file "%s". Expected "add", "post", or "group".', $node->localName, $path));
+    //         }
+    //     }
+    //     return $content;
+    // }
+
     private function parseGroup(\DOMElement $node, string $path)
     {
         $content = [];
         foreach ($node->getElementsByTagNameNS(SELF::NAMESPACE_URI, '*') as $n) {
-            // switch ($n->localName) {
-            //     case 'add':
-            //         $content = $this->parseAdd($n, $path);
-            //         break;
-            //     case 'get':
-            //         $content = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
-            //         break;
-            //     case 'post':
-            //         $content = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
-            //         break;
-            //     case 'group':
-            //         // $content = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
-            //         break;
-            //     default:
-            //         break;
-            // }
+            switch ($n->localName) {
+                case 'add':
+                    $content = $this->parseAdd($n, $path);
+                    break;
+                case 'get':
+                    $content = ['type' => '_get', '_remap' => [$this->parseGet($n, $path)]];
+                    break;
+                case 'post':
+                    $content = ['type' => '_post', '_remap' => [$this->parsePost($n, $path)]];
+                    break;
+                case 'group':
+                    // $content = ['type' => '_group', '_content' => $this->parseGroup($n, $path)];
+                    break;
+                default:
+                    break;
+            }
             $content[] = $n->localName;
         }
         return $content;
@@ -152,7 +221,7 @@ class XmlFileLoader
         $content['_id'] = $id;
         $content['_controller'] = $controller;
         $content['_module'] = $module;
-        $content['_options'] = [$options];
+        $content['_options'] = $options;
         return $content;
     }
 
@@ -163,20 +232,20 @@ class XmlFileLoader
         $content['_id'] = $id;
         $content['_controller'] = $controller;
         $content['_module'] = $module;
-        $content['_options'] = [$options];
+        $content['_options'] = $options;
         return $content;
     }
 
-    private function parseAdd(\DOMElement $node, string $path)
-    {
-        $content = [];
-        [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
-        $content['_id'] = $id;
-        $content['_controller'] = $controller;
-        $content['_module'] = $module;
-        $content['_options'] = [$options];
-        return $content;
-    }
+    // private function parseAdd(\DOMElement $node, string $path)
+    // {
+    //     $content = [];
+    //     [$id, $controller, $module, $options] = $this->parseConfig($node, $path);
+    //     $content['_id'] = $id;
+    //     $content['_controller'] = $controller;
+    //     $content['_module'] = $module;
+    //     $content['_options'] = $options;
+    //     return $content;
+    // }
 
     private function parseConfig(\DOMElement $node, string $path)
     {

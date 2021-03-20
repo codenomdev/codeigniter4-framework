@@ -49,15 +49,22 @@ class RouteCollection
         return $this->route;
     }
 
-    // private function getController($controller)
-    // {
-    //     $this->component['_controller'][] = $controller;
-    //     return $this;
-    // }
-
-    // private function getPaths($paths)
-    // {
-    //     $this->component['_paths'][] = $paths;
-    //     return $this;
-    // }
+    public function testArray()
+    {
+        return [
+            'backend' => [
+                'get' => [
+                    [
+                        'from' => 'dashboard',
+                        'to' => 'Dashboard::index',
+                        'option' => [
+                            'namespace' => 'Codenom\Dashboard\Admin\Controller',
+                            'as' => 'test',
+                            'filter' => 'backend'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
 }

@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Data\Zone;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Config\TableRepository;
 
 class ZoneManager
 {
@@ -21,7 +22,7 @@ class ZoneManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('zone');
+        $this->objectManager = new ObjectManager(TableRepository::TABLE_ZONE);
     }
 
     /**

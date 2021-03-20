@@ -7,14 +7,11 @@
  * @license   https://github.com/codenomdev/codeigniter4-framework/blob/master/LICENSE MIT License
  */
 
-namespace Codenom\Framework\Views\Templates\Layout;
+namespace Codenom\Framework\Views\Templates\Factory;
 
-interface BuilderInterface
+class Template extends ComponentFactory
 {
-    /**
-     * Build structure
-     *
-     * @return LayoutInterface
-     */
-    public function build();
+    protected $themeName = 'default';
+    protected $charsetDefault = 'utf-8';
+    protected $themePath = 'design/adminhtml/default/';
 }
