@@ -23,6 +23,7 @@ class DirectoryList
      * @var array
      */
     private $directories;
+
     public function __construct()
     {
         $this->directories = static::getDefaultConfig();

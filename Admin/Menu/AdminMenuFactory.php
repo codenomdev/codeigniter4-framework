@@ -12,7 +12,7 @@ namespace Codenom\Framework\Admin\Menu;
 class AdminMenuFactory extends \Codenom\Framework\Libraries\Menu\MenuFactory
 {
     protected $rootItemName = 'Admin Menu';
-    protected $bodyHtml = '<div class="wada">';
+    protected $bodyHtml = '';
 
     public function adminMenu()
     {

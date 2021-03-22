@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Data\Users\Permissions;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Config\TableRepository;
 
 class PermissionManager
 {
@@ -23,7 +24,7 @@ class PermissionManager
      */
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('auth_permissions', false);
+        $this->objectManager = new ObjectManager(TableRepository::TABLE_AUTH_PERMISSION, false);
     }
 
     /**

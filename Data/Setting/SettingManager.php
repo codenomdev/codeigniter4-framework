@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Data\Setting;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Config\TableRepository;
 
 class SettingManager
 {
@@ -21,7 +22,7 @@ class SettingManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('setting');
+        $this->objectManager = new ObjectManager(TableRepository::TABLE_SETTING);
     }
 
     public function getGroupSettingByScope()

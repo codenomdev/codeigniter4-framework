@@ -10,6 +10,7 @@
 namespace Codenom\Framework\Data\Currency;
 
 use Codenom\Framework\Data\ObjectManager\ObjectManager;
+use Codenom\Framework\Config\TableRepository;
 
 class CurrencyManager
 {
@@ -21,7 +22,7 @@ class CurrencyManager
 
     public function __construct()
     {
-        $this->objectManager = new ObjectManager('currency', true);
+        $this->objectManager = new ObjectManager(TableRepository::TABLE_CURRENCY, TableRepository::IS_SOFT_DELETES);
     }
 
     /**

@@ -96,7 +96,7 @@ class File implements DriverInterface
         $result = @file_exists($filename);
         if ($result === null) {
             throw new FileSystemException(
-                'An error occurred during "%1" execution.'
+                \sprintf('An error occurred during "%1" execution.', $result)
             );
         }
         return $result;
