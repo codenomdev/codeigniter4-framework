@@ -14,6 +14,7 @@ use Codenom\Framework\Config\ValidationConfig;
 use CodeIgniter\Validation\Validation;
 use Codenom\Framework\Views\Result\Render;
 use Config\View as ViewConfig;
+use Codenom\Framework\Routing\RouteFactory;
 
 class Services extends BaseService
 {
@@ -57,5 +58,22 @@ class Services extends BaseService
         $config   = $config ?? config('View');
 
         return new Render($config, $viewPath, static::locator(), CI_DEBUG, static::logger());
+    }
+
+    /**
+     * The Routes service is a class that allows for easily building
+     * a collection of routes.
+     *
+     * @param boolean $getShared
+     *
+     * @return RouteFactory
+     */
+    public static function routes(bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('routes');
+        }
+
+        return new RouteFactory(static::locator(), config('Modules'));
     }
 }

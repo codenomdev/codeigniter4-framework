@@ -9,21 +9,72 @@
 
 namespace Codenom\Framework\Routing;
 
-class RouteFactory
+use CodeIgniter\Router\RouteCollection;
+use CodeIgniter\Autoloader\FileLocator;
+use Config\Modules;
+
+class RouteFactory extends RouteCollection
 {
-    protected $routeIdentity = null;
+    /**
+     * The namespace to be added to any Controllers.
+     * Defaults to the global namespaces (\)
+     *
+     * @var string
+     */
+    protected $defaultNamespace = 'App\Controllers\\';
 
-    protected $content = [];
+    /**
+     * The name of the default controller to use
+     * when no other controller is specified.
+     *
+     * Not used here. Pass-thru value for Router class.
+     *
+     * @var string
+     */
+    protected $defaultController = 'Home';
 
-    public function setRouteIdentity(string $routeIdentity)
+    /**
+     * The name of the default method to use
+     * when no other method has been specified.
+     *
+     * Not used here. Pass-thru value for Router class.
+     *
+     * @var string
+     */
+    protected $defaultMethod = 'index';
+
+    /**
+     * Whether to match URI against Controllers
+     * when it doesn't match defined routes.
+     *
+     * Not used here. Pass-thru value for Router class.
+     *
+     * @var boolean
+     */
+    protected $autoRoute = true;
+
+    public function __construct(FileLocator $locator, Modules $moduleConfig)
     {
-        $this->routeIdentity = $routeIdentity;
-
-        return $this;
+        parent::__construct($locator, $moduleConfig);
     }
 
-    public function getRouteIdentity()
+    public function getDefaultNamespace(): string
     {
-        return $this->routeIdentity;
+        return parent::getDefaultNamespace();
+    }
+
+    /**
+     * Does the heavy lifting of creating an actual route. You must specify
+     * the request method(s) that this route will work for. They can be separated
+     * by a pipe character "|" if there is more than one.
+     *
+     * @param string       $verb
+     * @param string       $from
+     * @param string|array $to
+     * @param array|null   $options
+     */
+    public function create(string $verb, string $from, $to, array $options = null)
+    {
+        return parent::create($verb, $from, $to, $options);
     }
 }
