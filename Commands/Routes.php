@@ -23,35 +23,45 @@ class Routes extends BaseCommand
 	 *
 	 * @var string
 	 */
-	protected $name = 'setup:route';
+	protected $name = 'make:route';
 
 	/**
 	 * The Command's short description
 	 *
 	 * @var string
 	 */
-	protected $description = 'Create route module';
+	protected $description = 'Generates a new route file.';
 
 	/**
 	 * The Command's usage
 	 *
 	 * @var string
 	 */
-	protected $usage = 'command:name [arguments] [options]';
+	protected $usage = 'make:route [arguments] [options]';
 
 	/**
 	 * The Command's arguments.
 	 *
 	 * @var array
 	 */
-	protected $arguments = [];
+	protected $arguments = [
+		'module' => 'Name of Module.',
+		// 'route (from)' => 'Name of route. Example: test',
+		// 'controller' => 'Name of Controller for create route',
+	];
 
 	/**
 	 * The Command's options.
 	 *
 	 * @var array
 	 */
-	protected $options = [];
+	protected $options = [
+		// '--module' => 'Name of module. Example: Vendor_Module.',
+		'--type' => 'Type Route. Available type: default, core.',
+		'--route' => 'Name of route. Example: dashboard.',
+		'--controller' => 'Name of Controller for create route.',
+
+	];
 
 	/**
 	 * Actually execute a command.
@@ -60,6 +70,22 @@ class Routes extends BaseCommand
 	 */
 	public function run(array $params)
 	{
-		//
+		$this->component = 'Route';
+		$this->directory = 'Models';
+		$this->template  = 'route.tpl.php';
+
+		$this->classNameLang = 'Module Name';
+		$this->execute($params);
+	}
+
+	/**
+	 * Prepare options and do the necessary replacements.
+	 *
+	 * @param string $class
+	 *
+	 * @return string
+	 */
+	protected function prepare(string $class)
+	{
 	}
 }

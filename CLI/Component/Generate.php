@@ -180,6 +180,7 @@ class Generate
         }
         return $nameSpaceArray;
     }
+
     /**
      * Builder for get name of module
      *         Example: Module_Dashboard

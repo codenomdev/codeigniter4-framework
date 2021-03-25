@@ -9,8 +9,6 @@
 
 namespace Codenom\Framework\Routing;
 
-use Config\Services;
-// use CodeIgniter\Router\RouteCollection as CIRoute;
 use Codenom\Framework\Routing\Loader\Loader;
 
 class RouteCollection

@@ -14,11 +14,28 @@ use Codenom\Framework\Filesystem\DirectoryList;
 
 class File
 {
+    /**
+     * Default CHMOD
+     * @var string
+     */
     const DEFAULT_CHMOD = '0777';
 
+    /**
+     * @var Codenom\Framework\Drive\File
+     */
     protected $drive;
+
+    /**
+     * @var Codenom\Framework\Filesystem\DirectoryList
+     */
     protected $directoryList;
+
+    /**
+     * Property protected
+     * @var
+     */
     protected $installationWritableDirectories;
+
     /**
      * List of current writable directories for installation
      *
@@ -33,6 +50,12 @@ class File
      */
     protected $nonWritablePathsInDirectories = [];
 
+    /**
+     * Constructor Class
+     * 
+     * @var Codenom\Framework\Drive\File
+     * @var Codenom\Framework\Filesystem\DirectoryList
+     */
     public function __construct()
     {
         $this->drive = new Files();

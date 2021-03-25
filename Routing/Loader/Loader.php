@@ -38,10 +38,11 @@ class Loader
      * Available key
      */
     const AVAILABLE_KEYS = [
-        'id', 'options', 'controller', 'method', 'namespace', 'filter', 'as'
+        'id', 'options', 'controller', 'method', 'filter', 'as', 'type', 'module'
     ];
 
     const TYPE_ID = ['backend', 'frontend'];
+
     /**
      * Constructor Class
      * 
@@ -99,11 +100,14 @@ class Loader
         }
 
         $content = [];
-
         foreach ($parsedConfig as $name => $config) {
+            // $config = \array_merge($config['options'], ['type' => 'default']);
+            if (!isset($config['type'])) {
+                $config = \array_merge($config, ['type' => 'default']);
+            }
             $this->validate($config, $name, $file);
             $this->parseRoute($collection, $name, $config, $file);
-            // $content[$name] = $config;
+            // $content[$name] = $this->parseRoute($collection, $name, $config, $file);
         }
 
         return $collection;
@@ -112,24 +116,114 @@ class Loader
     /**
      * Parses a route and adds it to the RouteCollection.
      *
+     * @param RouteFactory $collection
      * @param string $name   Route name
      * @param array  $config Route definition
      * @param string $path   Full path of the YAML file being processed
      */
-    protected function parseRoute($collection, $name, $config, $path)
+    protected function parseRoute(RouteFactory $collection, $name, $config, $path)
     {
         $method = $config['method'] ?? 'add';
         $options = $config['options'] ?? [];
+
+        $type = $config['type'];
+        unset($config['type']);
 
         if (isset($config['as']) || isset($config['options']['as'])) {
             $name = $config['as'] ?? $config['options']['as'];
         }
 
-        if ($collection instanceof RouteFactory) {
-            $collection->create($method, $name, $config['controller'], $options);
+        if (isset($options['namespace'])) {
+            unset($options['namespace']);
         }
 
+        switch ($config['id']) {
+            case Element::ATTRIBUTE_BACKEND:
+                $this->generateAdminUrl($collection, $type, $method, $name, $config, $options);
+                break;
+            case 'frontend':
+                $this->generateFrontUrl($collection, $method, $name, $config, $options);
+            default:
+                throw new \InvalidArgumentException(sprintf('The routing file "%s" not valid ID attributes. Expected of one "backend" or "frontend"', $path));
+                break;
+        }
+        // $collection->group('backend', function ($collection) use ($method, $name, $config, $options) {
+        //     $collection->create($method, $name, $config['controller'], $options);
+        // });
+
         return $collection;
+    }
+
+    /**
+     * Grouping for frontend URL
+     * 
+     * @param RouteFactory $collection
+     * @param string $method
+     * @param string $name
+     * @param array $config
+     * @param array $options
+     */
+    protected function generateFrontUrl(RouteFactory $collection, $method, $name, $config, $options)
+    {
+        $collection->create($method, $name, $config['controller'], $options);
+    }
+
+
+    /**
+     * Grouping Admin URL
+     * 
+     * @param RouteFactory $collection
+     * @param string $method
+     * @param string $name
+     * @param array $config
+     * @param array $options
+     * 
+     * @return void
+     */
+    protected function generateAdminUrl(RouteFactory $collection, string $type, string $method, string $name, array $config, array $options)
+    {
+
+        $namespace['namespace'] = $this->buildClassName($config['module']) . Element::ADMIN_PATH_CONTROLLERS;
+        $options = \array_merge($namespace, $options);
+
+        $nameModule = $this->buildDirectoryNameSpace($config['module']);
+
+        $collection->group(Element::URL_SUFFIX_ADMIN, function ($collection) use ($type, $method, $name, $nameModule, $config, $options) {
+
+            switch ($type) {
+
+                case 'default':
+                    $collection->group($nameModule, function ($collection) use ($method, $name, $config, $options) {
+                        $collection->create($method, $name, $config['controller'], $options);
+                    });
+                    break;
+                case 'core':
+                    $collection->create($method, $name, $config['controller'], $options);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf('Route type: "%s" unsupported. Please correct.', $type));
+                    break;
+            }
+        });
+    }
+
+    protected function generateGroup(RouteFactory $collection, string $nameOfGroup, $config)
+    {
+        $options = $config['options'] ?? [];
+
+        if (isset($config['namespace'])) {
+            unset($options['options']['namespace']);
+        }
+
+        if (isset($config['filter'])) {
+            unset($option['options']['filter']);
+        }
+
+        $namespace['namespace'] = $config['namespace'] ?? $config['options']['namespace'];
+        // $collection->group($nameOfGroup, array_merge($namespace, $options), function ($collection) use ($nameOfGroup, $config) {
+        // });
+        // return $
+        // return [$nameOfGroup, $options];
     }
 
     /**
@@ -156,21 +250,18 @@ class Loader
             throw new \InvalidArgumentException(sprintf('Unknown tag "id" used in file "%s".', $path));
         }
 
+        if ($config['type'] === 'group' && !isset($config['namespace'])) {
+            throw new \InvalidArgumentException(sprintf('The namespace must be a implementation for "%s": "namespace" on file: "%s', $name, $path));
+        }
+        if (empty($config['module'])) {
+            throw new \InvalidArgumentException(sprintf('The module name must be a implementation for "%s": "module:" on file: "%s"', $name, $path));
+        }
         $typeId = $config['id'];
 
-        if ($typeId !== 'backend' && $typeId !== 'frontend') {
+        if ($typeId !== Element::ATTRIBUTE_BACKEND && Element::ATTRIBUTE_FRONTEND) {
             throw new \InvalidArgumentException(sprintf('The routing file "%s" contains unsupported keys for "%s": "%s". Expected one of: "%s".', $path, $name, $typeId, implode('", "', self::TYPE_ID)));
         }
     }
-
-    // protected function routeParse($value)
-    // {
-    //     if (isset($value['method']) === 'get') {
-    //         $this->route->get($value['path'], $value['controller'], ['namespace' => 'Codenom\Dashboard\Admin\Controllers']);
-    //     }
-
-    //     // return
-    // }
 
     /**
      * Builds namespace + classname out of the parts array
@@ -181,8 +272,33 @@ class Loader
      * @param string[] $parts
      * @return string
      */
-    protected function buildClassName(string $className)
+    private function buildClassName(string $className)
     {
         return $this->nameBuilder->buildClassName([$className]);
+    }
+
+    /**
+     * Build Directory namespace
+     * 
+     * @var buildClassName
+     * @param string $parts
+     * @return string
+     */
+    private function buildDirectoryNameSpace(string $parts)
+    {
+        $className = $this->buildClassName($parts);
+        return \strtolower($this->nameBuilder->buildDirectoryNameSpace($className));
+    }
+
+    /**
+     * Get namespace
+     * 
+     * @var buildClassName
+     * @param string $moduleName
+     * @return string
+     */
+    private function getNamespace(string $moduleName)
+    {
+        return $this->buildClassName($moduleName) . \DIRECTORY_SEPARATOR . 'Admin\\Controllers';
     }
 }

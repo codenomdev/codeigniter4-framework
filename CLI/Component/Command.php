@@ -21,12 +21,29 @@ class Command
      */
     protected $generate;
 
+    /**
+     * Constructor Class
+     * 
+     * @var Codenom\Framework\CLI\Component\Template
+     * @var Codenom\Framework\CLI\Component\Generate
+     */
     public function __construct()
     {
         $this->generate = new Generate();
         $this->template = new Template();
     }
 
+    /**
+     * Running Compiler
+     * 
+     * @var Codenom\Framework\CLI\Component\Template::compileTitle
+     * @var Codenom\Framework\CLI\Component\Template::waitingCompile
+     * @var checkPermissionWritableDirectory
+     * @var removeAutoloadFile
+     * @var generateAutoload
+     * 
+     * @return void
+     */
     public function runCompiler()
     {
         $this->template->compileTitle();
@@ -38,6 +55,14 @@ class Command
         $this->generateAutoload();
     }
 
+    /**
+     * Publish Autoload config
+     * 
+     * @var Codenom\Framework\CLI\Component\Template::publicAutoloadConfigTitle
+     * @var Codenom\Framework\CLI\Component\Template::waitingCompile
+     * @var schemaAutoloadPsr4Dom
+     * @return void
+     */
     public function runPublishAutoloadConfig()
     {
         $this->template->publishAutoloadConfigTitle();
@@ -45,6 +70,16 @@ class Command
         $this->schemaAutoloadPsr4Dom();
     }
 
+    /**
+     * Check permission folder writable directory
+     * 
+     * @var Codenom\Framework\CLI\Component\Template::waitingCompile
+     * @var Codenom\Framework\CLI\Component\Template::checkFolderPermissionTitle
+     * @var Codenom\Framework\CLI\Component\Generate::checkPermissionWritableDirectory
+     * @var Codenom\Framework\CLI\Component\Generate::successfullyCheckPermissionFolder
+     * @var Codenom\Framework\CLI\Component\Generate::unsuccessfullyCheckPermissionFolder
+     * @return bool
+     */
     private function checkPermissionWritableDirectory()
     {
         $this->template->waitingCompile();
@@ -59,6 +94,13 @@ class Command
         }
     }
 
+    /**
+     * Remove Autoload File old
+     * 
+     * @var Codenom\Framework\CLI\Component\Generate::removeGenerateAutoload
+     * @var Codenom\Framework\CLI\Template\Template::successfullyRemoveAutoload
+     * @return mixed
+     */
     private function removeAutoloadFile()
     {
         if ($this->generate->removeGenerateAutoload())
@@ -68,6 +110,16 @@ class Command
         // }
     }
 
+    /**
+     * Generate new Autoload
+     * 
+     * @var Codenom\Framework\CLI\Component\Template::contentAutoloadGenerate
+     * @var Codenom\Framework\CLI\Component\Generate::fileCreate
+     * @var Codenom\Framework\CLI\Component\Template::waitingCompile
+     * @var Codenom\Framework\CLI\Component\Template::successfullyGenerateAutoload
+     * @var Codenom\Framework\CLI\Component\Template::unsuccessfullyGenerateAutoload
+     * @return mixed
+     */
     private function generateAutoload()
     {
         $createSchema = $this->template->contentAutoloadGenerate($this->generate->getNameModule());
@@ -80,6 +132,16 @@ class Command
         }
     }
 
+    /**
+     * DOM Schema Autoload PSR-4
+     * 
+     * @var Codenom\Framework\CLI\Component\Generate::preparePublishGenerateAutoload
+     * @var Codenom\Framework\CLI\Component\Generate::getAutoloadConfig
+     * @var Codenom\Framework\CLI\Component\Generate::moveAutoloadConfig
+     * @var Codenom\Framework\CLI\Component\Template::publishAutoloadSuccessfully
+     * @var Codenom\Framework\CLI\Component\Template::publishAutoloadUnsuccessfully
+     * @return mixed
+     */
     private function schemaAutoloadPsr4Dom()
     {
         $generate = $this->generate->preparePublishGenerateAutoload();

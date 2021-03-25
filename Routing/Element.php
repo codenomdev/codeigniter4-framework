@@ -36,4 +36,30 @@ class Element
      * Path Module
      */
     const PATH_MODULE = \APPPATH . 'Code\\';
+
+    /**
+     * Admin URL
+     */
+    const URL_SUFFIX_ADMIN = 'backend';
+
+    /**
+     * ID attribute Admin URL Suffix
+     * 
+     * @var string
+     */
+    const ATTRIBUTE_BACKEND = 'backend';
+
+    /**
+     * ID attribute frontend URL Suffix
+     * 
+     * @var string
+     */
+    const ATTRIBUTE_FRONTEND = 'frontend';
+
+    /**
+     * Controller path
+     * 
+     * @var string
+     */
+    const ADMIN_PATH_CONTROLLERS = '\\Admin\Controllers';
 }
